@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A-GRUP AI — KPSS A Grubu AI Koçu</title>
+<style>
+:root{--p:#5b4bdb;--p2:#7568ee;--ink:#17213b;--muted:#6d7890;--bg:#f5f7fc;--card:#fff;--line:#e6e9f2;--good:#19a974;--bad:#e34f61}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.app{display:flex;min-height:100vh}.side{width:240px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:fixed;inset:0 auto 0 0}
+.logo{font-size:24px;font-weight:800;color:#1d2a52;margin:4px 10px 28px}.logo span{color:var(--p)}
+.nav button{width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0;color:#5d6880;cursor:pointer;font-size:14px}.nav button.active,.nav button:hover{background:#efedff;color:var(--p);font-weight:700}
+.user{position:absolute;bottom:20px;left:16px;right:16px;padding:12px;background:#f7f8fc;border-radius:12px;font-size:13px}
+.main{margin-left:240px;width:calc(100% - 240px);padding:28px 36px;max-width:1400px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.eyebrow{font-size:13px;color:var(--p);font-weight:700}.title{font-size:28px;font-weight:800;margin:4px 0}.sub{color:var(--muted)}
+.btn{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:11px 17px;border-radius:10px;font-weight:700;cursor:pointer}.btn.secondary{background:#fff;color:var(--p);border:1px solid #d9d6ff}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 3px 14px rgba(30,40,80,.04)}.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
+.metric{font-size:30px;font-weight:800;margin-top:8px}.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:#efedff;color:var(--p);font-size:12px;font-weight:700}
+.task{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}.task small{display:block;color:var(--muted);margin-top:4px}
+.progress{height:9px;background:#eceef5;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--p),#8b7df4);border-radius:99px}
+.bar{height:11px;background:#eceef5;border-radius:8px;margin:8px 0 14px;overflow:hidden}.bar i{display:block;height:100%;background:#6b5ee7}
+.view{display:none}.view.active{display:block}
+.question{font-size:19px;font-weight:700;line-height:1.5;margin:22px 0}.option{display:block;width:100%;padding:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;margin:9px 0;cursor:pointer}.option:hover{border-color:var(--p)}.option.correct{border-color:var(--good);background:#effbf6}.option.wrong{border-color:var(--bad);background:#fff1f3}
+.ai{margin-top:18px;background:#f4f2ff;border:1px solid #ddd9ff;border-radius:13px;padding:16px;line-height:1.6}.hidden{display:none}
+.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:14px}.red{color:var(--bad);font-weight:700}.green{color:var(--good);font-weight:700}
+.planrow{display:grid;grid-template-columns:90px 1fr 70px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+@media(max-width:900px){.side{width:190px}.main{margin-left:190px;width:calc(100% - 190px);padding:20px}.span4,.span6,.span8{grid-column:span 12}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="logo">A-GRUP <span>AI</span></div>
+<div class="nav">
+<button class="active" data-view="home">⌂ Ana Sayfa</button>
+<button data-view="quiz">◉ Soru Çöz</button>
+<button data-view="coach">✦ AI Öğretmen</button>
+<button data-view="mistakes">⚠ Yanlışlarım</button>
+<button data-view="plan">▣ Çalışma Planım</button>
+<button data-view="progress">◔ İlerlemem</button>
+</div>
+<div class="user"><b>Selin</b><br><span style="color:#7a8498">Premium Üye</span></div>
+</aside>
+
+<main class="main">
+<section id="home" class="view active">
+<header><div><div class="eyebrow">KPSS A GRUBU</div><div class="title">Günaydın, Selin 👋</div><div class="sub">Bugünkü hedefin: 45 dakikalık odaklı çalışma.</div></div><button class="btn" onclick="show('quiz')">Çalışmaya Başla →</button></header>
+<div class="grid">
+<div class="card span4"><span class="pill">Bugünkü hedef</span><div class="metric">35 / 45 dk</div><div class="progress" style="margin-top:14px"><i style="width:78%"></i></div></div>
+<div class="card span4"><span class="pill">Genel başarı</span><div class="metric">%62</div><div class="sub">Son 30 güne göre +8 puan</div></div>
+<div class="card span4"><span class="pill">Çözülen soru</span><div class="metric">428</div><div class="sub">Bu ay</div></div>
+<div class="card span8"><h3>Bugünkü Görevlerin</h3>
+<div class="task"><div>📚 <b>Büyüme Teorisi</b><small>10 dk konu tekrarı</small></div><button class="btn secondary" onclick="show('coach')">Başla</button></div>
+<div class="task"><div>🧮 <b>Para ve Banka</b><small>15 soru · Öncelikli konu</small></div><button class="btn secondary" onclick="show('quiz')">Başla</button></div>
+<div class="task"><div>⚠ <b>Yanlış Tekrarı</b><small>5 soru</small></div><button class="btn secondary" onclick="show('mistakes')">Başla</button></div>
+</div>
+<div class="card span4"><h3>AI Koçunun Notu</h3><p>Para-Banka ve Büyüme konularında son testlerde zorlandın. Bu hafta çalışma sürenin yaklaşık %40'ını bu iki konuya ayırmanı öneriyorum.</p><button class="btn" onclick="show('plan')">Planı Gör</button></div>
+</div>
+</section>
+
+<section id="quiz" class="view">
+<header><div><div class="eyebrow">İKTİSAT · MİKRO İKTİSAT</div><div class="title">Seviye Belirleme Mini Quiz</div><div class="sub">Soru 5 / 20 · Tahmini süre 24 dk</div></div></header>
+<div class="card">
+<div class="progress"><i id="qprog" style="width:25%"></i></div>
+<div class="question">Aşağıdakilerden hangisi tam rekabet piyasasının temel özelliklerinden biri <u>değildir</u>?</div>
+<div id="opts">
+<button class="option" onclick="answer(this,false)">A) Piyasaya giriş ve çıkışın serbest olması</button>
+<button class="option" onclick="answer(this,false)">B) Homojen ürün</button>
+<button class="option" onclick="answer(this,true)">C) Az sayıda alıcı ve satıcı</button>
+<button class="option" onclick="answer(this,false)">D) Tam bilgi</button>
+<button class="option" onclick="answer(this,false)">E) Fiyatın firma tarafından veri kabul edilmesi</button>
+</div>
+<div id="ai" class="ai hidden"><b>🤖 AI Açıklaması</b><p>Tam rekabet piyasasında çok sayıda alıcı ve satıcı bulunur. Bu nedenle “az sayıda alıcı ve satıcı” ifadesi tam rekabetin özelliği değildir.</p><b>💡 Kavramı Tekrar Edelim</b><p>Temel özellikler: çok sayıda alıcı-satıcı, homojen ürün, tam bilgi ve piyasaya giriş-çıkış serbestisidir.</p><button class="btn" onclick="show('coach')">Bu Konuyu Çalış →</button></div>
+</div>
+</section>
+
+<section id="coach" class="view">
+<header><div><div class="eyebrow">AI ÖĞRETMEN</div><div class="title">Para-Banka: 5 Dakikalık Tekrar</div><div class="sub">Son hatalarına göre kişiselleştirildi.</div></div></header>
+<div class="card"><h3>💡 Para arzı ve faiz ilişkisi</h3><p>Para arzındaki değişim ile faiz oranı arasındaki ilişkiyi anlamak için önce para piyasasında arz ve talebin nasıl kesiştiğini düşün.</p>
+<div class="ai"><b>🤖 Sana özel anlatım</b><p>Son 3 testinde bu konuyla ilgili iki soruda kavramları ters eşleştirdin. Bu yüzden önce temel ilişkiyi kuruyoruz, ardından benzer sorular çözeceğiz.</p></div>
+<h3>Şimdi mini kontrol</h3><p>Para arzı artarken, diğer koşullar sabitken faiz oranında hangi yönde değişim beklenir?</p><button class="option" onclick="this.innerHTML='✅ Doğru! Para arzındaki artış faiz oranı üzerinde aşağı yönlü baskı oluşturabilir.'">A) Düşüş yönünde</button><button class="option">B) Artış yönünde</button></div>
+</section>
+
+<section id="mistakes" class="view">
+<header><div><div class="eyebrow">PERFORMANS</div><div class="title">Yanlışlarım ve Analiz</div><div class="sub">Son 30 gündeki hataların.</div></div></header>
+<div class="grid">
+<div class="card span6"><h3>Hata Türleri</h3><p>🟣 Kavram karıştırma <b>%42</b></p><div class="bar"><i style="width:42%"></i></div><p>🔵 Formül/hesaplama <b>%25</b></p><div class="bar"><i style="width:25%"></i></div><p>🟢 Bilgi eksiği <b>%18</b></p><div class="bar"><i style="width:18%"></i></div><p>🟠 Dikkat hatası <b>%10</b></p><div class="bar"><i style="width:10%"></i></div></div>
+<div class="card span6"><h3>En Çok Zorlandığın Konular</h3><table class="table"><tr><th>Konu</th><th>Doğru</th><th>Başarı</th></tr><tr><td>Para ve Banka</td><td>7</td><td class="red">%28</td></tr><tr><td>Büyüme Teorisi</td><td>8</td><td class="red">%36</td></tr><tr><td>Kamu Giderleri</td><td>12</td><td>%43</td></tr><tr><td>Vergi Teorisi</td><td>10</td><td>%48</td></tr></table></div>
+</div>
+</section>
+
+<section id="plan" class="view">
+<header><div><div class="eyebrow">KİŞİSEL PLAN</div><div class="title">Bu Haftanın Çalışma Planı</div><div class="sub">AI, son performansına göre planı otomatik güncelliyor.</div></div></header>
+<div class="card">
+<div class="planrow"><b>Pzt · 16 Eyl</b><span>Para ve Banka · 40 dk</span><span class="green">✓</span></div>
+<div class="planrow"><b>Sal · 17 Eyl</b><span>Büyüme Teorisi · 35 dk</span><span class="green">✓</span></div>
+<div class="planrow"><b>Çar · 18 Eyl</b><span>Maliye — Vergi · 45 dk</span><span>○</span></div>
+<div class="planrow"><b>Per · 19 Eyl</b><span>IS-LM Modeli · 40 dk</span><span>○</span></div>
+<div class="planrow"><b>Cum · 20 Eyl</b><span>Kamu Giderleri · 40 dk</span><span>○</span></div>
+<div class="planrow"><b>Cmt · 21 Eyl</b><span>Genel Tekrar · 60 dk</span><span>○</span></div>
+<div class="planrow"><b>Paz · 22 Eyl</b><span>Deneme Sınavı · 90 dk</span><span>○</span></div>
+</div>
+</section>
+
+<section id="progress" class="view">
+<header><div><div class="eyebrow">İLERLEME</div><div class="title">Genel İlerlemen</div><div class="sub">Ders ve konu bazında performansın.</div></div></header>
+<div class="grid">
+<div class="card span6"><h3>Ders Bazında Başarı</h3><p>İktisat · %64</p><div class="bar"><i style="width:64%"></i></div><p>Maliye · %48</p><div class="bar"><i style="width:48%"></i></div><p>Hukuk · %57</p><div class="bar"><i style="width:57%"></i></div><p>Muhasebe · %71</p><div class="bar"><i style="width:71%"></i></div></div>
+<div class="card span6"><h3>AI Koçunun Özeti</h3><p>Son 30 günde toplam 428 soru çözdün. İktisat performansında yükseliş görülüyor; Para-Banka ve Büyüme konuları ise tekrar önceliği taşıyor.</p><span class="pill">Hedef ilerleme: %62</span></div>
+</div>
+</section>
+</main>
+</div>
+<script>
+function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>show(b.dataset.view));
+function answer(el,correct){document.querySelectorAll('.option').forEach(x=>x.disabled=true);el.classList.add(correct?'correct':'wrong');if(!correct){document.querySelectorAll('.option')[2].classList.add('correct')}document.getElementById('ai').classList.remove('hidden')}
+</script>
+</body>
+</html>
