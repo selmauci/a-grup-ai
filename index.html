@@ -116,5 +116,201 @@ function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.remo
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>show(b.dataset.view));
 function answer(el,correct){document.querySelectorAll('.option').forEach(x=>x.disabled=true);el.classList.add(correct?'correct':'wrong');if(!correct){document.querySelectorAll('.option')[2].classList.add('correct')}document.getElementById('ai').classList.remove('hidden')}
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const A_GRUP_SUPABASE_URL = 'https://ekmqcznrjebiowuaysbe.supabase.co';
+const A_GRUP_SUPABASE_KEY = 'sb_publishable_uT7QjXuIQpKbmKFXCfEAPg_egyYi4X0';
+
+const A_GRUP_DB = window.supabase.createClient(
+  A_GRUP_SUPABASE_URL,
+  A_GRUP_SUPABASE_KEY
+);
+
+async function AGrupQuiz() {
+  const quiz = document.getElementById('quiz');
+  if (!quiz) return;
+
+  quiz.innerHTML = `
+    <header>
+      <div>
+        <div class="eyebrow">İKTİSAT · MİKRO İKTİSAT</div>
+        <div class="title">Soru Çöz</div>
+        <div class="sub" id="agrupInfo">Supabase'den gerçek sorular yükleniyor...</div>
+      </div>
+      <button class="btn secondary" id="agrupRefresh">Yeni Sorular</button>
+    </header>
+
+    <div class="card">
+      <div class="progress">
+        <i id="agrupProgress" style="width:0%"></i>
+      </div>
+      <div id="agrupQuestion">
+        <p class="sub">Sorular yükleniyor...</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('agrupRefresh').onclick = AGrupQuiz;
+
+  const { data: subject, error: subjectError } =
+    await A_GRUP_DB
+      .from('subjects')
+      .select('id')
+      .eq('name', 'İktisat')
+      .single();
+
+  if (subjectError) {
+    document.getElementById('agrupQuestion').innerHTML =
+      '<div class="ai"><b>Ders alınamadı.</b><p>' +
+      subjectError.message +
+      '</p></div>';
+    return;
+  }
+
+  const { data, error } =
+    await A_GRUP_DB
+      .from('questions')
+      .select(`
+        id,
+        question_text,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        option_e,
+        correct_answer,
+        explanation,
+        difficulty,
+        topics(name)
+      `)
+      .eq('subject_id', subject.id)
+      .eq('status', 'published')
+      .limit(100);
+
+  if (error) {
+    document.getElementById('agrupQuestion').innerHTML =
+      '<div class="ai"><b>Sorular alınamadı.</b><p>' +
+      error.message +
+      '</p></div>';
+    return;
+  }
+
+  const sorular = (data || [])
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 20);
+
+  if (!sorular.length) {
+    document.getElementById('agrupQuestion').innerHTML =
+      '<p class="sub">Yayınlanmış soru bulunamadı.</p>';
+    return;
+  }
+
+  let sıra = 0;
+
+  function göster() {
+    const q = sorular[sıra];
+
+    document.getElementById('agrupInfo').textContent =
+      `Soru ${sıra + 1} / ${sorular.length} · Konu: ${q.topics?.name || 'Genel'}`;
+
+    document.getElementById('agrupProgress').style.width =
+      `${((sıra + 1) / sorular.length) * 100}%`;
+
+    const seçenekler = [
+      ['A', q.option_a],
+      ['B', q.option_b],
+      ['C', q.option_c],
+      ['D', q.option_d],
+      ['E', q.option_e]
+    ];
+
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="question">${temiz(q.question_text)}</div>
+
+      <div id="agrupOptions">
+        ${seçenekler.map(([harf, metin]) => `
+          <button class="option" data-answer="${harf}">
+            <b>${harf})</b> ${temiz(metin)}
+          </button>
+        `).join('')}
+      </div>
+
+      <div id="agrupAI" class="ai hidden"></div>
+    `;
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(btn => {
+        btn.onclick = () => cevapla(btn, q);
+      });
+  }
+
+  function cevapla(btn, q) {
+    const seçilen = btn.dataset.answer;
+    const doğru = seçilen === q.correct_answer;
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(x => x.disabled = true);
+
+    btn.classList.add(doğru ? 'correct' : 'wrong');
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(x => {
+        if (x.dataset.answer === q.correct_answer)
+          x.classList.add('correct');
+      });
+
+    const ai = document.getElementById('agrupAI');
+    ai.classList.remove('hidden');
+
+    ai.innerHTML = `
+      <b>${doğru ? '✅ Doğru!' : '❌ Yanlış.'}</b>
+      <p>${temiz(q.explanation || '')}</p>
+      <p>
+        <span class="pill">${temiz(q.topics?.name || 'Genel')}</span>
+        <span class="pill">${temiz(q.difficulty || '')}</span>
+      </p>
+
+      <button class="btn" id="agrupNext">
+        ${sıra + 1 < sorular.length ? 'Sonraki Soru →' : 'Yeni Quiz'}
+      </button>
+    `;
+
+    document.getElementById('agrupNext').onclick = () => {
+      if (sıra + 1 < sorular.length) {
+        sıra++;
+        göster();
+      } else {
+        AGrupQuiz();
+      }
+    };
+  }
+
+  function temiz(value) {
+    return String(value ?? '').replace(/[&<>"']/g, x => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[x]));
+  }
+
+  göster();
+}
+
+const eskiShow = window.show;
+
+window.show = function(id) {
+  eskiShow(id);
+
+  if (id === 'quiz') {
+    AGrupQuiz();
+  }
+};
+</script>
 </body>
 </html>
