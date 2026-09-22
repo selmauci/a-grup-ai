@@ -136,7 +136,7 @@ async function AGrupQuiz() {
   quiz.innerHTML = `
     <header>
       <div>
-        <div class="eyebrow">İKTİSAT · MİKRO İKTİSAT</div>
+        <div class="eyebrow" id="quizEyebrow">DERS</div>
         <div class="title">Soru Çöz</div>
         <div class="sub" id="agrupInfo">Supabase'den gerçek sorular yükleniyor...</div>
       </div>
@@ -159,7 +159,7 @@ async function AGrupQuiz() {
     await A_GRUP_DB
       .from('subjects')
       .select('id')
-      .eq('name', 'İktisat')
+      .eq('name', currentSubject)
       .single();
 
   if (subjectError) {
