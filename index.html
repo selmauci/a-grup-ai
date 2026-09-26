@@ -135,6 +135,7 @@ const A_GRUP_DB = window.supabase.createClient(
 
 async function AGrupQuiz() {
   const quiz = document.getElementById('quiz');
+  const currentSubject = 'Hukuk';
   if (!quiz) return;
 
   quiz.innerHTML = `
