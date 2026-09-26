@@ -59,19 +59,19 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 </section>
 
 <section id="quiz" class="view">
-<header><div><div class="eyebrow">İKTİSAT · MİKRO İKTİSAT</div><div class="title">Seviye Belirleme Mini Quiz</div><div class="sub">Soru 5 / 20 · Tahmini süre 24 dk</div></div></header>
-<div class="card">
-<div class="progress"><i id="qprog" style="width:25%"></i></div>
-<div class="question">Aşağıdakilerden hangisi tam rekabet piyasasının temel özelliklerinden biri <u>değildir</u>?</div>
-<div id="opts">
-<button class="option" onclick="answer(this,false)">A) Piyasaya giriş ve çıkışın serbest olması</button>
-<button class="option" onclick="answer(this,false)">B) Homojen ürün</button>
-<button class="option" onclick="answer(this,true)">C) Az sayıda alıcı ve satıcı</button>
-<button class="option" onclick="answer(this,false)">D) Tam bilgi</button>
-<button class="option" onclick="answer(this,false)">E) Fiyatın firma tarafından veri kabul edilmesi</button>
-</div>
-<div id="ai" class="ai hidden"><b>🤖 AI Açıklaması</b><p>Tam rekabet piyasasında çok sayıda alıcı ve satıcı bulunur. Bu nedenle “az sayıda alıcı ve satıcı” ifadesi tam rekabetin özelliği değildir.</p><b>💡 Kavramı Tekrar Edelim</b><p>Temel özellikler: çok sayıda alıcı-satıcı, homojen ürün, tam bilgi ve piyasaya giriş-çıkış serbestisidir.</p><button class="btn" onclick="show('coach')">Bu Konuyu Çalış →</button></div>
-</div>
+  <header>
+    <div>
+      <div class="eyebrow">KPSS A GRUBU</div>
+      <div class="title">Soru Çöz</div>
+      <div class="sub">Ders seçerek çalışmaya başla.</div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div id="agrupQuestion">
+      <p class="sub">Dersler yükleniyor...</p>
+    </div>
+  </div>
 </section>
 
 <section id="coach" class="view">
