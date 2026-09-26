@@ -132,48 +132,197 @@ const A_GRUP_DB = window.supabase.createClient(
   A_GRUP_SUPABASE_URL,
   A_GRUP_SUPABASE_KEY
 );
-
-async function AGrupQuiz() {
+async function AGrupQuiz(selectedSubject = null) {
   const quiz = document.getElementById('quiz');
-  const currentSubject = 'Hukuk';
   if (!quiz) return;
+
+  // --------------------------------------------------
+  // 1. DERS SEÇİLMEDİYSE DERSLERİ SUPABASE'DEN GETİR
+  // --------------------------------------------------
+  if (!selectedSubject) {
+
+    quiz.innerHTML = `
+      <header>
+        <div>
+          <div class="eyebrow">KPSS A GRUBU</div>
+          <div class="title">Soru Çöz</div>
+          <div class="sub">
+            Çalışmak istediğin dersi seç.
+          </div>
+        </div>
+      </header>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Dersler</h3>
+
+        <div
+          id="agrupSubjects"
+          style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+            gap:12px;
+            margin-top:18px;
+          "
+        >
+          <p class="sub">Dersler yükleniyor...</p>
+        </div>
+      </div>
+    `;
+
+    const { data: subjects, error: subjectsError } =
+      await A_GRUP_DB
+        .from('subjects')
+        .select('id,name')
+        .order('id');
+
+    if (subjectsError) {
+      document.getElementById('agrupSubjects').innerHTML = `
+        <div class="ai">
+          <b>Dersler alınamadı.</b>
+          <p>${temiz(subjectsError.message)}</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (!subjects || !subjects.length) {
+      document.getElementById('agrupSubjects').innerHTML = `
+        <div class="ai">
+          <b>Ders bulunamadı.</b>
+        </div>
+      `;
+      return;
+    }
+
+    document.getElementById('agrupSubjects').innerHTML =
+      subjects.map(subject => `
+        <button
+          class="btn secondary agrupSubjectButton"
+          data-subject="${temiz(subject.name)}"
+          style="
+            width:100%;
+            min-height:58px;
+            text-align:left;
+          "
+        >
+          ${temiz(subject.name)}
+        </button>
+      `).join('');
+
+    document
+      .querySelectorAll('.agrupSubjectButton')
+      .forEach(button => {
+
+        button.onclick = () => {
+          AGrupQuiz(button.dataset.subject);
+        };
+
+      });
+
+    return;
+  }
+
+
+  // --------------------------------------------------
+  // 2. SEÇİLEN DERSİN SORU EKRANI
+  // --------------------------------------------------
 
   quiz.innerHTML = `
     <header>
       <div>
-        <div class="eyebrow" id="quizEyebrow">DERS</div>
+        <div class="eyebrow" id="quizEyebrow">
+          ${temiz(selectedSubject)}
+        </div>
+
         <div class="title">Soru Çöz</div>
-        <div class="sub" id="agrupInfo">Supabase'den gerçek sorular yükleniyor...</div>
+
+        <div class="sub" id="agrupInfo">
+          Sorular yükleniyor...
+        </div>
       </div>
-      <button class="btn secondary" id="agrupRefresh">Yeni Sorular</button>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+        <button
+          class="btn secondary"
+          id="agrupBack"
+        >
+          Ders Değiştir
+        </button>
+
+        <button
+          class="btn secondary"
+          id="agrupRefresh"
+        >
+          Yeni Sorular
+        </button>
+
+      </div>
     </header>
 
     <div class="card">
+
       <div class="progress">
-        <i id="agrupProgress" style="width:0%"></i>
+        <i
+          id="agrupProgress"
+          style="width:0%"
+        ></i>
       </div>
+
       <div id="agrupQuestion">
-        <p class="sub">Sorular yükleniyor...</p>
+        <p class="sub">
+          ${temiz(selectedSubject)} soruları yükleniyor...
+        </p>
       </div>
+
     </div>
   `;
 
-  document.getElementById('agrupRefresh').onclick = AGrupQuiz;
+
+  document.getElementById('agrupBack').onclick = () => {
+    AGrupQuiz();
+  };
+
+
+  document.getElementById('agrupRefresh').onclick = () => {
+    AGrupQuiz(selectedSubject);
+  };
+
+
+  // --------------------------------------------------
+  // 3. SEÇİLEN DERSİN ID'SİNİ BUL
+  // --------------------------------------------------
 
   const { data: subject, error: subjectError } =
     await A_GRUP_DB
       .from('subjects')
-      .select('id')
-      .eq('name', currentSubject)
+      .select('id,name')
+      .eq('name', selectedSubject)
       .single();
 
-  if (subjectError) {
-    document.getElementById('agrupQuestion').innerHTML =
-      '<div class="ai"><b>Ders alınamadı.</b><p>' +
-      subjectError.message +
-      '</p></div>';
+
+  if (subjectError || !subject) {
+
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Ders alınamadı.</b>
+        <p>
+          ${temiz(
+            subjectError
+              ? subjectError.message
+              : 'Ders bulunamadı.'
+          )}
+        </p>
+      </div>
+    `;
+
     return;
   }
+
+
+  // --------------------------------------------------
+  // 4. O DERSE AİT YAYINLANMIŞ SORULARI GETİR
+  // --------------------------------------------------
 
   const { data, error } =
     await A_GRUP_DB
@@ -193,21 +342,291 @@ async function AGrupQuiz() {
       `)
       .eq('subject_id', subject.id)
       .eq('status', 'published')
-      .limit(100);
+      .limit(1000);
+
 
   if (error) {
-    document.getElementById('agrupQuestion').innerHTML =
-      '<div class="ai"><b>Sorular alınamadı.</b><p>' +
-      error.message +
-      '</p></div>';
+
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Sorular alınamadı.</b>
+        <p>${temiz(error.message)}</p>
+      </div>
+    `;
+
     return;
   }
 
-  const sorular = (data || [])
+
+  // --------------------------------------------------
+  // 5. SORULARI KARIŞTIR VE 20 SORULUK QUIZ OLUŞTUR
+  // --------------------------------------------------
+
+  const sorular = [...(data || [])]
     .sort(() => Math.random() - 0.5)
     .slice(0, 20);
 
+
   if (!sorular.length) {
+
+    document.getElementById('agrupInfo').textContent =
+      selectedSubject;
+
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Bu derste yayımlanmış soru bulunamadı.</b>
+        <p>
+          Supabase'de bu derse ait
+          <b>published</b> durumunda soru bulunmuyor.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  let sira = 0;
+
+
+  // --------------------------------------------------
+  // 6. SORUYU GÖSTER
+  // --------------------------------------------------
+
+  function goster() {
+
+    const q = sorular[sira];
+
+    const konu =
+      q.topics?.name ||
+      'Genel';
+
+
+    document.getElementById('quizEyebrow').textContent =
+      selectedSubject;
+
+
+    document.getElementById('agrupInfo').textContent =
+      `Soru ${sira + 1} / ${sorular.length} · Konu: ${konu}`;
+
+
+    document.getElementById('agrupProgress').style.width =
+      `${((sira + 1) / sorular.length) * 100}%`;
+
+
+    const secenekler = [
+      ['A', q.option_a],
+      ['B', q.option_b],
+      ['C', q.option_c],
+      ['D', q.option_d],
+      ['E', q.option_e]
+    ];
+
+
+    document.getElementById('agrupQuestion').innerHTML = `
+
+      <div class="question">
+        ${temiz(q.question_text)}
+      </div>
+
+      <div id="agrupOptions">
+
+        ${secenekler.map(([harf, metin]) => `
+
+          <button
+            class="option"
+            data-answer="${harf}"
+          >
+            <b>${harf})</b>
+            ${temiz(metin)}
+          </button>
+
+        `).join('')}
+
+      </div>
+
+      <div
+        id="agrupAI"
+        class="ai hidden"
+      ></div>
+
+    `;
+
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(button => {
+
+        button.onclick = () => {
+          cevapla(button, q);
+        };
+
+      });
+
+  }
+
+
+  // --------------------------------------------------
+  // 7. CEVABI KONTROL ET
+  // --------------------------------------------------
+
+  function cevapla(button, q) {
+
+    const secilen =
+      button.dataset.answer;
+
+
+    const dogruCevap =
+      String(q.correct_answer || '')
+        .trim()
+        .toUpperCase();
+
+
+    const dogru =
+      secilen === dogruCevap;
+
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(option => {
+
+        option.disabled = true;
+
+      });
+
+
+    button.classList.add(
+      dogru
+        ? 'correct'
+        : 'wrong'
+    );
+
+
+    document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(option => {
+
+        if (
+          option.dataset.answer === dogruCevap
+        ) {
+
+          option.classList.add('correct');
+
+        }
+
+      });
+
+
+    const ai =
+      document.getElementById('agrupAI');
+
+
+    ai.classList.remove('hidden');
+
+
+    ai.innerHTML = `
+
+      <b>
+        ${
+          dogru
+            ? '✅ Doğru!'
+            : '❌ Yanlış.'
+        }
+      </b>
+
+      ${
+        !dogru
+          ? `<p>Doğru cevap: <b>${temiz(dogruCevap)}</b></p>`
+          : ''
+      }
+
+      <p>
+        ${temiz(
+          q.explanation ||
+          'Bu soru için açıklama bulunmuyor.'
+        )}
+      </p>
+
+      <p>
+
+        <span class="pill">
+          ${temiz(
+            q.topics?.name ||
+            'Genel'
+          )}
+        </span>
+
+        <span class="pill">
+          ${temiz(
+            q.difficulty ||
+            ''
+          )}
+        </span>
+
+      </p>
+
+      <button
+        class="btn"
+        id="agrupNext"
+      >
+
+        ${
+          sira + 1 < sorular.length
+            ? 'Sonraki Soru →'
+            : 'Yeni Quiz'
+        }
+
+      </button>
+
+    `;
+
+
+    document.getElementById('agrupNext').onclick = () => {
+
+      if (
+        sira + 1 <
+        sorular.length
+      ) {
+
+        sira++;
+
+        goster();
+
+      } else {
+
+        AGrupQuiz(selectedSubject);
+
+      }
+
+    };
+
+  }
+
+
+  // --------------------------------------------------
+  // 8. HTML GÜVENLİĞİ
+  // --------------------------------------------------
+
+  function temiz(value) {
+
+    return String(value ?? '')
+      .replace(
+        /[&<>"']/g,
+        character => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[character]
+      );
+
+  }
+
+
+  // İlk soruyu göster
+  goster();
+} {
     document.getElementById('agrupQuestion').innerHTML =
       '<p class="sub">Yayınlanmış soru bulunamadı.</p>';
     return;
