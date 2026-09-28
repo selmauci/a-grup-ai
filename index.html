@@ -434,8 +434,12 @@ document.getElementById('agrupSubjects').innerHTML =
       selectedSubject;
 
 
-    document.getElementById('agrupInfo').textContent =
-      `Soru ${sira + 1} / ${sorular.length} · Toplam soru havuzu: ${data.length} · Konu: ${konu}`;
+  const bilgiAlani = document.getElementById('agrupInfo');
+
+if (bilgiAlani) {
+  bilgiAlani.innerHTML =
+    `<strong>Soru ${sira + 1} / ${sorular.length}</strong> · Toplam soru havuzu: ${data.length} · Konu: ${temiz(konu)}`;
+}
 
 
     document.getElementById('agrupProgress').style.width =
