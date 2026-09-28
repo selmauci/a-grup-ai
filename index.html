@@ -194,21 +194,49 @@ async function AGrupQuiz(selectedSubject = null) {
       return;
     }
 
-    document.getElementById('agrupSubjects').innerHTML =
-      subjects.map(subject => `
-        <button
-          class="btn secondary agrupSubjectButton"
-          data-subject="${temiz(subject.name)}"
-          style="
-            width:100%;
-            min-height:58px;
-            text-align:left;
-          "
-        >
-          ${temiz(subject.name)}
-        </button>
-      `).join('');
+// Her ders için yayımlanmış soru sayısını getir
+const subjectsWithCounts = await Promise.all(
+  subjects.map(async (subject) => {
 
+    const { count, error: countError } = await A_GRUP_DB
+      .from('questions')
+      .select('id', { count: 'exact', head: true })
+      .eq('subject_id', subject.id)
+      .eq('status', 'published');
+
+    return {
+      ...subject,
+      questionCount: countError ? 0 : (count || 0)
+    };
+  })
+);
+
+
+// Ders kartlarını oluştur
+document.getElementById('agrupSubjects').innerHTML =
+  subjectsWithCounts.map(subject => `
+    <button
+      class="btn secondary agrupSubjectButton"
+      data-subject="${temiz(subject.name)}"
+      style="
+        width:100%;
+        min-height:68px;
+        text-align:left;
+      "
+    >
+      <div style="font-weight:700;">
+        ${temiz(subject.name)}
+      </div>
+
+      <div style="
+        margin-top:6px;
+        font-size:13px;
+        opacity:.70;
+      ">
+        ${subject.questionCount} yayımlanmış soru
+      </div>
+    </button>
+  `).join('');
     document
       .querySelectorAll('.agrupSubjectButton')
       .forEach(button => {
