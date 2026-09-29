@@ -1,1272 +1,632 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A-GRUP AI — KPSS A Grubu AI Koçu</title>
+<style>
+:root{--p:#5b4bdb;--p2:#7568ee;--ink:#17213b;--muted:#6d7890;--bg:#f5f7fc;--card:#fff;--line:#e6e9f2;--good:#19a974;--bad:#e34f61}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+.app{display:flex;min-height:100vh}.side{width:240px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:fixed;inset:0 auto 0 0}
+.logo{font-size:24px;font-weight:800;color:#1d2a52;margin:4px 10px 28px}.logo span{color:var(--p)}
+.nav button{width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0;color:#5d6880;cursor:pointer;font-size:14px}.nav button.active,.nav button:hover{background:#efedff;color:var(--p);font-weight:700}
+.user{position:absolute;bottom:20px;left:16px;right:16px;padding:12px;background:#f7f8fc;border-radius:12px;font-size:13px}
+.main{margin-left:240px;width:calc(100% - 240px);padding:28px 36px;max-width:1400px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.eyebrow{font-size:13px;color:var(--p);font-weight:700}.title{font-size:28px;font-weight:800;margin:4px 0}.sub{color:var(--muted)}
+.btn{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:11px 17px;border-radius:10px;font-weight:700;cursor:pointer}.btn.secondary{background:#fff;color:var(--p);border:1px solid #d9d6ff}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 3px 14px rgba(30,40,80,.04)}.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
+.metric{font-size:30px;font-weight:800;margin-top:8px}.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:#efedff;color:var(--p);font-size:12px;font-weight:700}
+.task{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}.task small{display:block;color:var(--muted);margin-top:4px}
+.progress{height:9px;background:#eceef5;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--p),#8b7df4);border-radius:99px}
+.bar{height:11px;background:#eceef5;border-radius:8px;margin:8px 0 14px;overflow:hidden}.bar i{display:block;height:100%;background:#6b5ee7}
+.view{display:none}.view.active{display:block}
+.question{font-size:19px;font-weight:700;line-height:1.5;margin:22px 0}.option{display:block;width:100%;padding:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;margin:9px 0;cursor:pointer}.option:hover{border-color:var(--p)}.option.correct{border-color:var(--good);background:#effbf6}.option.wrong{border-color:var(--bad);background:#fff1f3}
+.ai{margin-top:18px;background:#f4f2ff;border:1px solid #ddd9ff;border-radius:13px;padding:16px;line-height:1.6}.hidden{display:none}
+.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:14px}.red{color:var(--bad);font-weight:700}.green{color:var(--good);font-weight:700}
+.planrow{display:grid;grid-template-columns:90px 1fr 70px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
+@media(max-width:900px){.side{width:190px}.main{margin-left:190px;width:calc(100% - 190px);padding:20px}.span4,.span6,.span8{grid-column:span 12}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="logo">A-GRUP <span>AI</span></div>
+<div class="nav">
+<button class="active" data-view="home">⌂ Ana Sayfa</button>
+<button data-view="quiz">◉ Soru Çöz</button>
+<button data-view="coach">✦ AI Öğretmen</button>
+<button data-view="mistakes">⚠ Yanlışlarım</button>
+<button data-view="plan">▣ Çalışma Planım</button>
+<button data-view="progress">◔ İlerlemem</button>
+</div>
+<div class="user"><b>Selin</b><br><span style="color:#7a8498">Premium Üye</span></div>
+</aside>
+
+<main class="main">
+<section id="home" class="view active">
+<header><div><div class="eyebrow">KPSS A GRUBU</div><div class="title">Günaydın, Selin 👋</div><div class="sub">Bugünkü hedefin: 45 dakikalık odaklı çalışma.</div></div><button class="btn" onclick="show('quiz')">Çalışmaya Başla →</button></header>
+<div class="grid">
+<div class="card span4"><span class="pill">Bugünkü hedef</span><div class="metric">35 / 45 dk</div><div class="progress" style="margin-top:14px"><i style="width:78%"></i></div></div>
+<div class="card span4"><span class="pill">Genel başarı</span><div class="metric">%62</div><div class="sub">Son 30 güne göre +8 puan</div></div>
+<div class="card span4"><span class="pill">Çözülen soru</span><div class="metric">428</div><div class="sub">Bu ay</div></div>
+<div class="card span8"><h3>Bugünkü Görevlerin</h3>
+<div class="task"><div>📚 <b>Hukuka Giriş ve Temel Kavramlar</b><small>10 dk konu tekrarı</small></div><button class="btn secondary" onclick="show('coach')">Başla</button></div>
+<div class="task"><div>🧮 <b>Hukuk</b><small>15 soru · Öncelikli konu</small></div><button class="btn secondary" onclick="show('quiz')">Başla</button></div>
+<div class="task"><div>⚠ <b>Yanlış Tekrarı</b><small>5 soru</small></div><button class="btn secondary" onclick="show('mistakes')">Başla</button></div>
+</div>
+<div class="card span4"><h3>AI Koçunun Notu</h3><p>Hukuka Giriş ve Temel Kavramlar konusunda çalışmaya başladın. Soru sonuçlarına göre eksik olduğun konular belirlenecek ve çalışma planın buna göre güncellenecek.</p><button class="btn" onclick="show('plan')">Planı Gör</button></div>
+</div>
+</section>
+
+<section id="quiz" class="view">
+  <header>
+    <div>
+      <div class="eyebrow">KPSS A GRUBU</div>
+      <div class="title">Soru Çöz</div>
+      <div class="sub">Ders seçerek çalışmaya başla.</div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div id="agrupQuestion">
+      <p class="sub">Dersler yükleniyor...</p>
+    </div>
+  </div>
+</section>
+
+<section id="coach" class="view">
+<header><div><div class="eyebrow">AI ÖĞRETMEN</div><div class="title">Para-Banka: 5 Dakikalık Tekrar</div><div class="sub">Son hatalarına göre kişiselleştirildi.</div></div></header>
+<div class="card"><h3>💡 Para arzı ve faiz ilişkisi</h3><p>Para arzındaki değişim ile faiz oranı arasındaki ilişkiyi anlamak için önce para piyasasında arz ve talebin nasıl kesiştiğini düşün.</p>
+<div class="ai"><b>🤖 Sana özel anlatım</b><p>Son 3 testinde bu konuyla ilgili iki soruda kavramları ters eşleştirdin. Bu yüzden önce temel ilişkiyi kuruyoruz, ardından benzer sorular çözeceğiz.</p></div>
+<h3>Şimdi mini kontrol</h3><p>Para arzı artarken, diğer koşullar sabitken faiz oranında hangi yönde değişim beklenir?</p><button class="option" onclick="this.innerHTML='✅ Doğru! Para arzındaki artış faiz oranı üzerinde aşağı yönlü baskı oluşturabilir.'">A) Düşüş yönünde</button><button class="option">B) Artış yönünde</button></div>
+</section>
+
+<section id="mistakes" class="view">
+<header><div><div class="eyebrow">PERFORMANS</div><div class="title">Yanlışlarım ve Analiz</div><div class="sub">Son 30 gündeki hataların.</div></div></header>
+<div class="grid">
+<div class="card span6"><h3>Hata Türleri</h3><p>🟣 Kavram karıştırma <b>%42</b></p><div class="bar"><i style="width:42%"></i></div><p>🔵 Formül/hesaplama <b>%25</b></p><div class="bar"><i style="width:25%"></i></div><p>🟢 Bilgi eksiği <b>%18</b></p><div class="bar"><i style="width:18%"></i></div><p>🟠 Dikkat hatası <b>%10</b></p><div class="bar"><i style="width:10%"></i></div></div>
+<div class="card span6"><h3>En Çok Zorlandığın Konular</h3><table class="table"><tr><th>Konu</th><th>Doğru</th><th>Başarı</th></tr><tr><td>Para ve Banka</td><td>7</td><td class="red">%28</td></tr><tr><td>Büyüme Teorisi</td><td>8</td><td class="red">%36</td></tr><tr><td>Kamu Giderleri</td><td>12</td><td>%43</td></tr><tr><td>Vergi Teorisi</td><td>10</td><td>%48</td></tr></table></div>
+</div>
+</section>
+
+<section id="plan" class="view">
+<header><div><div class="eyebrow">KİŞİSEL PLAN</div><div class="title">Bu Haftanın Çalışma Planı</div><div class="sub">AI, son performansına göre planı otomatik güncelliyor.</div></div></header>
+<div class="card">
+<div class="planrow"><b>Pzt · 16 Eyl</b><span>Para ve Banka · 40 dk</span><span class="green">✓</span></div>
+<div class="planrow"><b>Sal · 17 Eyl</b><span>Büyüme Teorisi · 35 dk</span><span class="green">✓</span></div>
+<div class="planrow"><b>Çar · 18 Eyl</b><span>Maliye — Vergi · 45 dk</span><span>○</span></div>
+<div class="planrow"><b>Per · 19 Eyl</b><span>IS-LM Modeli · 40 dk</span><span>○</span></div>
+<div class="planrow"><b>Cum · 20 Eyl</b><span>Kamu Giderleri · 40 dk</span><span>○</span></div>
+<div class="planrow"><b>Cmt · 21 Eyl</b><span>Genel Tekrar · 60 dk</span><span>○</span></div>
+<div class="planrow"><b>Paz · 22 Eyl</b><span>Deneme Sınavı · 90 dk</span><span>○</span></div>
+</div>
+</section>
+
+<section id="progress" class="view">
+<header><div><div class="eyebrow">İLERLEME</div><div class="title">Genel İlerlemen</div><div class="sub">Ders ve konu bazında performansın.</div></div></header>
+<div class="grid">
+<div class="card span6"><h3>Ders Bazında Başarı</h3><p>İktisat · %64</p><div class="bar"><i style="width:64%"></i></div><p>Maliye · %48</p><div class="bar"><i style="width:48%"></i></div><p>Hukuk · %57</p><div class="bar"><i style="width:57%"></i></div><p>Muhasebe · %71</p><div class="bar"><i style="width:71%"></i></div></div>
+<div class="card span6"><h3>AI Koçunun Özeti</h3><p>Son 30 günde toplam 428 soru çözdün. İktisat performansında yükseliş görülüyor; Para-Banka ve Büyüme konuları ise tekrar önceliği taşıyor.</p><span class="pill">Hedef ilerleme: %62</span></div>
+</div>
+</section>
+</main>
+</div>
+<script>
+function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b => b.onclick = () => {
+  const id = b.dataset.view;
+  show(id);
+  if (id === 'quiz') AGrupQuiz();
+});
+function answer(el,correct){document.querySelectorAll('.option').forEach(x=>x.disabled=true);el.classList.add(correct?'correct':'wrong');if(!correct){document.querySelectorAll('.option')[2].classList.add('correct')}document.getElementById('ai').classList.remove('hidden')}
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 const A_GRUP_SUPABASE_URL = 'https://ekmqcznrjebiowuaysbe.supabase.co';
-
 const A_GRUP_SUPABASE_KEY = 'sb_publishable_uT7QjXuIQpKbmKFXCfEAPg_egyYi4X0';
-
-const SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
-window.SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
+  const SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
+  window.SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
 
 const A_GRUP_DB = window.supabase.createClient(
   A_GRUP_SUPABASE_URL,
   A_GRUP_SUPABASE_KEY
 );
-
-
-// ======================================================
-// QUIZ STATE
-// ======================================================
-
-let A_GRUP_QUIZ_STATE = {
-  subject: null,
-  questions: [],
-  index: 0,
-  poolSize: 0
-};
-
-
-// ======================================================
-// A-GRUP QUIZ
-// ======================================================
-
-async function AGrupQuiz(selectedSubject = null, forceNew = false) {
-
+async function AGrupQuiz(selectedSubject = null) {
   const quiz = document.getElementById('quiz');
-
   if (!quiz) return;
 
-
-  // ====================================================
-  // HTML GÜVENLİĞİ
-  // ====================================================
-
-  function temiz(value) {
-
-    return String(value ?? '').replace(
-      /[&<>"']/g,
-      character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      })[character]
-    );
-
-  }
-
-
-  // ====================================================
-  // 1. DERS SEÇİM EKRANI
-  // ====================================================
-
+  // --------------------------------------------------
+  // 1. DERS SEÇİLMEDİYSE DERSLERİ SUPABASE'DEN GETİR
+  // --------------------------------------------------
   if (!selectedSubject) {
 
-    A_GRUP_QUIZ_STATE = {
-      subject: null,
-      questions: [],
-      index: 0,
-      poolSize: 0
-    };
-
-
     quiz.innerHTML = `
-
       <header>
-
         <div>
-
-          <div class="eyebrow">
-            KPSS A GRUBU
-          </div>
-
-          <div class="title">
-            Soru Çöz
-          </div>
-
+          <div class="eyebrow">KPSS A GRUBU</div>
+          <div class="title">Soru Çöz</div>
           <div class="sub">
             Çalışmak istediğin dersi seç.
           </div>
-
         </div>
-
       </header>
 
-
       <div class="card">
-
-        <h3 style="margin-top:0;">
-          Dersler
-        </h3>
-
+        <h3 style="margin-top:0;">Dersler</h3>
 
         <div
           id="agrupSubjects"
           style="
             display:grid;
-            grid-template-columns:
-              repeat(auto-fit,minmax(210px,1fr));
+            grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
             gap:12px;
             margin-top:18px;
           "
         >
-
-          <p class="sub">
-            Dersler yükleniyor...
-          </p>
-
+          <p class="sub">Dersler yükleniyor...</p>
         </div>
-
       </div>
-
     `;
 
-
-    // ==================================================
-    // DERSLERİ SUPABASE'DEN GETİR
-    // ==================================================
-
-    const {
-      data: subjects,
-      error: subjectsError
-    } = await A_GRUP_DB
-
-      .from('subjects')
-
-      .select(
-        'id,name'
-      )
-
-      .order('id');
-
+    const { data: subjects, error: subjectsError } =
+      await A_GRUP_DB
+        .from('subjects')
+        .select('id,name')
+        .order('id');
 
     if (subjectsError) {
-
-      document
-        .getElementById('agrupSubjects')
-        .innerHTML = `
-
-          <div class="ai">
-
-            <b>
-              Dersler alınamadı.
-            </b>
-
-            <p>
-              ${temiz(
-                subjectsError.message
-              )}
-            </p>
-
-          </div>
-
-        `;
-
+      document.getElementById('agrupSubjects').innerHTML = `
+        <div class="ai">
+          <b>Dersler alınamadı.</b>
+          <p>${temiz(subjectsError.message)}</p>
+        </div>
+      `;
       return;
-
     }
 
-
-    if (
-      !subjects ||
-      !subjects.length
-    ) {
-
-      document
-        .getElementById('agrupSubjects')
-        .innerHTML = `
-
-          <div class="ai">
-
-            <b>
-              Ders bulunamadı.
-            </b>
-
-          </div>
-
-        `;
-
+    if (!subjects || !subjects.length) {
+      document.getElementById('agrupSubjects').innerHTML = `
+        <div class="ai">
+          <b>Ders bulunamadı.</b>
+        </div>
+      `;
       return;
-
     }
 
+// Her ders için yayımlanmış soru sayısını getir
+const subjectsWithCounts = await Promise.all(
+  subjects.map(async (subject) => {
 
-    // ==================================================
-    // HER DERSİN YAYIMLANMIŞ SORU SAYISI
-    // ==================================================
+    const { count, error: countError } = await A_GRUP_DB
+      .from('questions')
+      .select('id', { count: 'exact', head: true })
+      .eq('subject_id', subject.id)
+      .eq('status', 'published');
 
-    const subjectsWithCounts =
-      await Promise.all(
-
-        subjects.map(
-          async subject => {
-
-            const {
-              count,
-              error: countError
-            } = await A_GRUP_DB
-
-              .from('questions')
-
-              .select(
-                'id',
-                {
-                  count: 'exact',
-                  head: true
-                }
-              )
-
-              .eq(
-                'subject_id',
-                subject.id
-              )
-
-              .eq(
-                'status',
-                'published'
-              );
+    return {
+      ...subject,
+      questionCount: countError ? 0 : (count || 0)
+    };
+  })
+);
 
 
-            return {
+// Ders kartlarını oluştur
+document.getElementById('agrupSubjects').innerHTML =
+  subjectsWithCounts.map(subject => `
+    <button
+      class="btn secondary agrupSubjectButton"
+      data-subject="${temiz(subject.name)}"
+      style="
+        width:100%;
+        min-height:68px;
+        text-align:left;
+      "
+    >
+      <div style="font-weight:700;">
+        ${temiz(subject.name)}
+      </div>
 
-              ...subject,
-
-              questionCount:
-                countError
-                  ? 0
-                  : (count || 0)
-
-            };
-
-          }
-        )
-
-      );
-
-
-    // ==================================================
-    // DERS KARTLARI
-    // ==================================================
-
+      <div style="
+        margin-top:6px;
+        font-size:13px;
+        opacity:.70;
+      ">
+        ${subject.questionCount} yayımlanmış soru
+      </div>
+    </button>
+  `).join('');
     document
-      .getElementById('agrupSubjects')
-      .innerHTML =
+      .querySelectorAll('.agrupSubjectButton')
+      .forEach(button => {
 
-      subjectsWithCounts
+        button.onclick = () => {
+          AGrupQuiz(button.dataset.subject);
+        };
 
-        .map(
-          subject => `
-
-            <button
-              type="button"
-              class="
-                btn
-                secondary
-                agrupSubjectButton
-              "
-              data-subject="
-                ${temiz(subject.name)}
-              "
-              style="
-                width:100%;
-                min-height:68px;
-                text-align:left;
-              "
-            >
-
-              <div
-                style="
-                  font-weight:700;
-                "
-              >
-
-                ${temiz(
-                  subject.name
-                )}
-
-              </div>
-
-
-              <div
-                style="
-                  margin-top:6px;
-                  font-size:13px;
-                  opacity:.70;
-                "
-              >
-
-                ${subject.questionCount}
-                yayımlanmış soru
-
-              </div>
-
-            </button>
-
-          `
-        )
-
-        .join('');
-
-
-    // ==================================================
-    // DERS SEÇİM BUTONLARI
-    // ==================================================
-
-    document
-      .querySelectorAll(
-        '.agrupSubjectButton'
-      )
-      .forEach(
-        button => {
-
-          button.onclick =
-            event => {
-
-              event.preventDefault();
-              event.stopPropagation();
-
-              AGrupQuiz(
-                button.dataset.subject.trim(),
-                true
-              );
-
-            };
-
-        }
-      );
-
+      });
 
     return;
-
   }
 
 
-  // ====================================================
-  // 2. SEÇİLEN DERSİN QUIZ EKRANI
-  // ====================================================
+  // --------------------------------------------------
+  // 2. SEÇİLEN DERSİN SORU EKRANI
+  // --------------------------------------------------
 
   quiz.innerHTML = `
-
     <header>
-
       <div>
-
-        <div
-          class="eyebrow"
-          id="quizEyebrow"
-        >
-
-          ${temiz(
-            selectedSubject
-          )}
-
+        <div class="eyebrow" id="quizEyebrow">
+          ${temiz(selectedSubject)}
         </div>
 
+        <div class="title">Soru Çöz</div>
 
-        <div class="title">
-          Soru Çöz
-        </div>
-
-
-        <div
-          class="sub"
-          id="agrupInfo"
-        >
-
+        <div class="sub" id="agrupInfo">
           Sorular yükleniyor...
-
         </div>
-
       </div>
 
-
-      <div
-        style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-        "
-      >
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
 
         <button
-          type="button"
           class="btn secondary"
           id="agrupBack"
         >
-
           Ders Değiştir
-
         </button>
 
-
         <button
-          type="button"
           class="btn secondary"
           id="agrupRefresh"
         >
-
           Yeni Sorular
-
         </button>
 
       </div>
-
     </header>
-
 
     <div class="card">
 
-
       <div class="progress">
-
         <i
           id="agrupProgress"
           style="width:0%"
         ></i>
-
       </div>
-
 
       <div id="agrupQuestion">
-
         <p class="sub">
-
-          ${temiz(
-            selectedSubject
-          )}
-
-          soruları yükleniyor...
-
+          ${temiz(selectedSubject)} soruları yükleniyor...
         </p>
-
       </div>
 
-
     </div>
-
   `;
 
 
-  // ====================================================
-  // DERS DEĞİŞTİR
-  // ====================================================
-
-  document
-    .getElementById('agrupBack')
-    .onclick = event => {
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      AGrupQuiz();
-
-    };
+  document.getElementById('agrupBack').onclick = () => {
+    AGrupQuiz();
+  };
 
 
-  // ====================================================
-  // YENİ SORULAR
-  // ====================================================
-
-  document
-    .getElementById('agrupRefresh')
-    .onclick = event => {
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      AGrupQuiz(
-        selectedSubject,
-        true
-      );
-
-    };
+  document.getElementById('agrupRefresh').onclick = () => {
+    AGrupQuiz(selectedSubject);
+  };
 
 
-  // ====================================================
-  // 3. MEVCUT QUIZ OTURUMU VAR MI?
-  // ====================================================
+  // --------------------------------------------------
+  // 3. SEÇİLEN DERSİN ID'SİNİ BUL
+  // --------------------------------------------------
 
-  const canReuseSession =
-
-    !forceNew &&
-
-    A_GRUP_QUIZ_STATE.subject ===
-      selectedSubject &&
-
-    A_GRUP_QUIZ_STATE.questions.length > 0;
-
-
-  // ====================================================
-  // 4. YENİ QUIZ GEREKİYORSA SORULARI GETİR
-  // ====================================================
-
-  if (!canReuseSession) {
-
-
-    // ==================================================
-    // DERS ID
-    // ==================================================
-
-    const {
-      data: subject,
-      error: subjectError
-    } = await A_GRUP_DB
-
+  const { data: subject, error: subjectError } =
+    await A_GRUP_DB
       .from('subjects')
-
-      .select(
-        'id,name'
-      )
-
-      .eq(
-        'name',
-        selectedSubject
-      )
-
+      .select('id,name')
+      .eq('name', selectedSubject)
       .single();
 
 
-    if (
-      subjectError ||
-      !subject
-    ) {
+  if (subjectError || !subject) {
 
-      document
-        .getElementById(
-          'agrupQuestion'
-        )
-        .innerHTML = `
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Ders alınamadı.</b>
+        <p>
+          ${temiz(
+            subjectError
+              ? subjectError.message
+              : 'Ders bulunamadı.'
+          )}
+        </p>
+      </div>
+    `;
 
-          <div class="ai">
-
-            <b>
-              Ders alınamadı.
-            </b>
-
-            <p>
-
-              ${temiz(
-
-                subjectError
-                  ? subjectError.message
-                  : 'Ders bulunamadı.'
-
-              )}
-
-            </p>
-
-          </div>
-
-        `;
-
-      return;
-
-    }
+    return;
+  }
 
 
-    // ==================================================
-    // YAYIMLANMIŞ SORULAR
-    // ==================================================
+  // --------------------------------------------------
+  // 4. O DERSE AİT YAYINLANMIŞ SORULARI GETİR
+  // --------------------------------------------------
 
-    const {
-      data,
-      error
-    } = await A_GRUP_DB
-
+  const { data, error } =
+    await A_GRUP_DB
       .from('questions')
-
       .select(`
-
         id,
-
         question_text,
-
         option_a,
-
         option_b,
-
         option_c,
-
         option_d,
-
         option_e,
-
         correct_answer,
-
         explanation,
-
         difficulty,
-
         topics(name)
-
       `)
-
-      .eq(
-        'subject_id',
-        subject.id
-      )
-
-      .eq(
-        'status',
-        'published'
-      )
-
+      .eq('subject_id', subject.id)
+      .eq('status', 'published')
       .limit(1000);
 
 
-    if (error) {
+  if (error) {
 
-      document
-        .getElementById(
-          'agrupQuestion'
-        )
-        .innerHTML = `
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Sorular alınamadı.</b>
+        <p>${temiz(error.message)}</p>
+      </div>
+    `;
 
-          <div class="ai">
-
-            <b>
-              Sorular alınamadı.
-            </b>
-
-            <p>
-              ${temiz(
-                error.message
-              )}
-            </p>
-
-          </div>
-
-        `;
-
-      return;
-
-    }
-
-
-    // ==================================================
-    // 20 SORULUK QUIZ
-    // ==================================================
-
-    const sorular =
-
-      [...(data || [])]
-
-        .sort(
-          () =>
-            Math.random() - 0.5
-        )
-
-        .slice(
-          0,
-          20
-        );
-
-
-    if (!sorular.length) {
-
-      document
-        .getElementById(
-          'agrupInfo'
-        )
-        .textContent =
-          selectedSubject;
-
-
-      document
-        .getElementById(
-          'agrupQuestion'
-        )
-        .innerHTML = `
-
-          <div class="ai">
-
-            <b>
-              Bu derste yayımlanmış
-              soru bulunamadı.
-            </b>
-
-            <p>
-
-              Supabase'de bu derse ait
-
-              <b>
-                published
-              </b>
-
-              durumunda soru bulunmuyor.
-
-            </p>
-
-          </div>
-
-        `;
-
-      return;
-
-    }
-
-
-    // ==================================================
-    // QUIZ STATE
-    // ==================================================
-
-    A_GRUP_QUIZ_STATE = {
-
-      subject:
-        selectedSubject,
-
-      questions:
-        sorular,
-
-      index:
-        0,
-
-      poolSize:
-        (data || []).length
-
-    };
-
+    return;
   }
 
 
-  // ====================================================
-  // 5. SORUYU GÖSTER
-  // ====================================================
+  // --------------------------------------------------
+  // 5. SORULARI KARIŞTIR VE 20 SORULUK QUIZ OLUŞTUR
+  // --------------------------------------------------
 
-  function goster() {
-
-
-    const sorular =
-      A_GRUP_QUIZ_STATE.questions;
+  const sorular = [...(data || [])]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 20);
 
 
-    const sira =
-      A_GRUP_QUIZ_STATE.index;
+  if (!sorular.length) {
+
+    document.getElementById('agrupInfo').textContent =
+      selectedSubject;
+
+    document.getElementById('agrupQuestion').innerHTML = `
+      <div class="ai">
+        <b>Bu derste yayımlanmış soru bulunamadı.</b>
+        <p>
+          Supabase'de bu derse ait
+          <b>published</b> durumunda soru bulunmuyor.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
 
 
-    const q =
-      sorular[sira];
+  let sira = 0;
 
+  function sayaciGuncelle() {
+    sayaciGuncelle();
 
-    if (!q) {
-
-      AGrupQuiz(
-        selectedSubject,
-        true
-      );
-
-      return;
-
-    }
-
-
-    const konu =
-      q.topics?.name ||
-      'Genel';
-
-
-    // ==================================================
-    // DERS BAŞLIĞI
-    // ==================================================
-
-    document
-      .getElementById(
-        'quizEyebrow'
-      )
-      .textContent =
-        selectedSubject;
-
-
-    // ==================================================
-    // SAYAÇ
-    // ==================================================
-
-    const bilgiAlani =
-      document.getElementById(
-        'agrupInfo'
-      );
-
-
-    if (bilgiAlani) {
-
-      bilgiAlani.innerHTML =
-
-        `<strong>Soru ${
-          sira + 1
-        } / ${
-          sorular.length
-        }</strong> · Toplam soru havuzu: ${
-          A_GRUP_QUIZ_STATE.poolSize
-        } · Konu: ${
-          temiz(konu)
-        }`;
-
-    }
-
-
-    // ==================================================
-    // İLERLEME ÇUBUĞU
-    // ==================================================
-
-    document
-      .getElementById(
-        'agrupProgress'
-      )
-      .style.width =
-
-        `${
-          (
-            (
-              sira + 1
-            ) /
-            sorular.length
-          ) * 100
-        }%`;
-
-
-    // ==================================================
-    // ŞIKLAR
-    // ==================================================
 
     const secenekler = [
-
-      [
-        'A',
-        q.option_a
-      ],
-
-      [
-        'B',
-        q.option_b
-      ],
-
-      [
-        'C',
-        q.option_c
-      ],
-
-      [
-        'D',
-        q.option_d
-      ],
-
-      [
-        'E',
-        q.option_e
-      ]
-
+      ['A', q.option_a],
+      ['B', q.option_b],
+      ['C', q.option_c],
+      ['D', q.option_d],
+      ['E', q.option_e]
     ];
 
 
-    // ==================================================
-    // SORU HTML
-    // ==================================================
+    document.getElementById('agrupQuestion').innerHTML = `
+
+      <div class="question">
+        ${temiz(q.question_text)}
+      </div>
+
+      <div id="agrupOptions">
+
+        ${secenekler.map(([harf, metin]) => `
+
+          <button
+            class="option"
+            data-answer="${harf}"
+          >
+            <b>${harf})</b>
+            ${temiz(metin)}
+          </button>
+
+        `).join('')}
+
+      </div>
+
+      <div
+        id="agrupAI"
+        class="ai hidden"
+      ></div>
+
+    `;
+
 
     document
-      .getElementById(
-        'agrupQuestion'
-      )
-      .innerHTML = `
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(button => {
 
+        button.onclick = () => {
+          cevapla(button, q);
+        };
 
-        <div class="question">
-
-          ${temiz(
-            q.question_text
-          )}
-
-        </div>
-
-
-        <div id="agrupOptions">
-
-
-          ${secenekler
-
-            .map(
-
-              (
-                [
-                  harf,
-                  metin
-                ]
-              ) => `
-
-
-                <button
-
-                  type="button"
-
-                  class="option"
-
-                  data-answer="
-                    ${harf}
-                  "
-
-                >
-
-
-                  <b>
-                    ${harf})
-                  </b>
-
-
-                  ${temiz(
-                    metin
-                  )}
-
-
-                </button>
-
-
-              `
-
-            )
-
-            .join('')}
-
-
-        </div>
-
-
-        <div
-
-          id="agrupAI"
-
-          class="
-            ai
-            hidden
-          "
-
-        ></div>
-
-
-      `;
-
-
-    // ==================================================
-    // ŞIK TIKLAMA
-    // ==================================================
-
-    document
-
-      .querySelectorAll(
-        '#agrupOptions .option'
-      )
-
-      .forEach(
-
-        button => {
-
-          button.onclick =
-            event => {
-
-              event.preventDefault();
-              event.stopPropagation();
-
-              cevapla(
-                button,
-                q
-              );
-
-            };
-
-        }
-
-      );
+      });
 
   }
 
 
-  // ====================================================
-  // 6. CEVABI KONTROL ET
-  // ====================================================
+  // --------------------------------------------------
+  // 7. CEVABI KONTROL ET
+  // --------------------------------------------------
 
-  function cevapla(
-    button,
-    q
-  ) {
-
+  function cevapla(button, q) {
 
     const secilen =
-      String(
-        button.dataset.answer || ''
-      )
-        .trim()
-        .toUpperCase();
+      button.dataset.answer;
 
 
     const dogruCevap =
-      String(
-        q.correct_answer || ''
-      )
+      String(q.correct_answer || '')
         .trim()
         .toUpperCase();
 
 
     const dogru =
-      secilen ===
-      dogruCevap;
+      secilen === dogruCevap;
 
-
-    // ==================================================
-    // ŞIKLARI KİLİTLE
-    // ==================================================
 
     document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(option => {
 
-      .querySelectorAll(
-        '#agrupOptions .option'
-      )
+        option.disabled = true;
 
-      .forEach(
+      });
 
-        option => {
-
-          option.disabled =
-            true;
-
-        }
-
-      );
-
-
-    // ==================================================
-    // SEÇİLEN ŞIK
-    // ==================================================
 
     button.classList.add(
-
       dogru
         ? 'correct'
         : 'wrong'
-
     );
 
 
-    // ==================================================
-    // DOĞRU ŞIK
-    // ==================================================
-
     document
+      .querySelectorAll('#agrupOptions .option')
+      .forEach(option => {
 
-      .querySelectorAll(
-        '#agrupOptions .option'
-      )
+        if (
+          option.dataset.answer === dogruCevap
+        ) {
 
-      .forEach(
-
-        option => {
-
-          const optionAnswer =
-            String(
-              option.dataset.answer || ''
-            )
-              .trim()
-              .toUpperCase();
-
-
-          if (
-            optionAnswer ===
-            dogruCevap
-          ) {
-
-            option.classList.add(
-              'correct'
-            );
-
-          }
+          option.classList.add('correct');
 
         }
 
-      );
+      });
 
-
-    // ==================================================
-    // AÇIKLAMA
-    // ==================================================
 
     const ai =
-      document.getElementById(
-        'agrupAI'
-      );
+      document.getElementById('agrupAI');
 
 
-    ai.classList.remove(
-      'hidden'
-    );
-
-
-    const sonSoru =
-
-      A_GRUP_QUIZ_STATE.index + 1 >=
-
-      A_GRUP_QUIZ_STATE.questions.length;
+    ai.classList.remove('hidden');
 
 
     ai.innerHTML = `
 
-
       <b>
-
         ${
           dogru
-
             ? '✅ Doğru!'
-
             : '❌ Yanlış.'
         }
-
       </b>
-
 
       ${
         !dogru
-
-          ? `
-
-            <p>
-
-              Doğru cevap:
-
-              <b>
-                ${temiz(
-                  dogruCevap
-                )}
-              </b>
-
-            </p>
-
-          `
-
+          ? `<p>Doğru cevap: <b>${temiz(dogruCevap)}</b></p>`
           : ''
       }
 
-
       <p>
-
         ${temiz(
-
           q.explanation ||
-
           'Bu soru için açıklama bulunmuyor.'
-
         )}
-
       </p>
-
 
       <p>
 
-
         <span class="pill">
-
           ${temiz(
-
             q.topics?.name ||
-
             'Genel'
-
           )}
-
         </span>
-
 
         <span class="pill">
-
           ${temiz(
-
             q.difficulty ||
-
             ''
-
           )}
-
         </span>
-
 
       </p>
-
 
       <button
-
-        type="button"
-
         class="btn"
-
         id="agrupNext"
-
       >
 
         ${
-          sonSoru
-
-            ? 'Yeni Quiz'
-
-            : 'Sonraki Soru →'
+          sira + 1 < sorular.length
+            ? 'Sonraki Soru →'
+            : 'Yeni Quiz'
         }
 
       </button>
 
-
     `;
 
 
-    // ==================================================
-    // 7. SONRAKİ SORU
-    // ==================================================
+    document.getElementById('agrupNext').onclick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    document
-      .getElementById(
-        'agrupNext'
-      )
-      .onclick =
-        event => {
-
-
-          event.preventDefault();
-
-          event.stopPropagation();
-
-
-          if (
-
-            A_GRUP_QUIZ_STATE.index + 1 <
-
-            A_GRUP_QUIZ_STATE.questions.length
-
-          ) {
-
-
-            A_GRUP_QUIZ_STATE.index += 1;
-
-
-            goster();
-
-
-          } else {
-
-
-            AGrupQuiz(
-              selectedSubject,
-              true
-            );
-
-
-          }
-
-        };
+      if (sira < sorular.length - 1) {
+        sira = sira + 1;
+        goster();
+      } else {
+        AGrupQuiz(selectedSubject);
+      }
+    };
 
   }
 
 
-  // ====================================================
-  // İLK SORU
-  // ====================================================
+  // --------------------------------------------------
+  // 8. HTML GÜVENLİĞİ
+  // --------------------------------------------------
 
+  function temiz(value) {
+
+    return String(value ?? '')
+      .replace(
+        /[&<>"']/g,
+        character => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[character]
+      );
+
+  }
+
+
+  // İlk soruyu göster
   goster();
-
-}
+} 
 
 </script>
+</body>
+</html>
