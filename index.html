@@ -133,27 +133,65 @@ const A_GRUP_DB = window.supabase.createClient(
   A_GRUP_SUPABASE_KEY
 );
 async function AGrupQuiz(selectedSubject = null) {
+
   const quiz = document.getElementById('quiz');
+
   if (!quiz) return;
 
-  // --------------------------------------------------
-  // 1. DERS SEÇİLMEDİYSE DERSLERİ SUPABASE'DEN GETİR
-  // --------------------------------------------------
+
+  // ==================================================
+  // HTML GÜVENLİĞİ
+  // ==================================================
+
+  function temiz(value) {
+
+    return String(value ?? '').replace(
+      /[&<>"']/g,
+      character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      })[character]
+    );
+
+  }
+
+
+  // ==================================================
+  // 1. DERS SEÇİM EKRANI
+  // ==================================================
+
   if (!selectedSubject) {
 
     quiz.innerHTML = `
       <header>
+
         <div>
-          <div class="eyebrow">KPSS A GRUBU</div>
-          <div class="title">Soru Çöz</div>
+
+          <div class="eyebrow">
+            KPSS A GRUBU
+          </div>
+
+          <div class="title">
+            Soru Çöz
+          </div>
+
           <div class="sub">
             Çalışmak istediğin dersi seç.
           </div>
+
         </div>
+
       </header>
 
+
       <div class="card">
-        <h3 style="margin-top:0;">Dersler</h3>
+
+        <h3 style="margin-top:0;">
+          Dersler
+        </h3>
 
         <div
           id="agrupSubjects"
@@ -164,114 +202,222 @@ async function AGrupQuiz(selectedSubject = null) {
             margin-top:18px;
           "
         >
-          <p class="sub">Dersler yükleniyor...</p>
+
+          <p class="sub">
+            Dersler yükleniyor...
+          </p>
+
         </div>
+
       </div>
     `;
 
-    const { data: subjects, error: subjectsError } =
-      await A_GRUP_DB
-        .from('subjects')
-        .select('id,name')
-        .order('id');
+
+    const {
+      data: subjects,
+      error: subjectsError
+    } = await A_GRUP_DB
+      .from('subjects')
+      .select('id,name')
+      .order('id');
+
 
     if (subjectsError) {
-      document.getElementById('agrupSubjects').innerHTML = `
-        <div class="ai">
-          <b>Dersler alınamadı.</b>
-          <p>${temiz(subjectsError.message)}</p>
-        </div>
-      `;
+
+      document
+        .getElementById('agrupSubjects')
+        .innerHTML = `
+          <div class="ai">
+
+            <b>
+              Dersler alınamadı.
+            </b>
+
+            <p>
+              ${temiz(subjectsError.message)}
+            </p>
+
+          </div>
+        `;
+
       return;
+
     }
+
 
     if (!subjects || !subjects.length) {
-      document.getElementById('agrupSubjects').innerHTML = `
-        <div class="ai">
-          <b>Ders bulunamadı.</b>
-        </div>
-      `;
+
+      document
+        .getElementById('agrupSubjects')
+        .innerHTML = `
+          <div class="ai">
+            <b>Ders bulunamadı.</b>
+          </div>
+        `;
+
       return;
+
     }
 
-// Her ders için yayımlanmış soru sayısını getir
-const subjectsWithCounts = await Promise.all(
-  subjects.map(async (subject) => {
 
-    const { count, error: countError } = await A_GRUP_DB
-      .from('questions')
-      .select('id', { count: 'exact', head: true })
-      .eq('subject_id', subject.id)
-      .eq('status', 'published');
+    // ==================================================
+    // HER DERSİN YAYIMLANMIŞ SORU SAYISI
+    // ==================================================
 
-    return {
-      ...subject,
-      questionCount: countError ? 0 : (count || 0)
-    };
-  })
-);
+    const subjectsWithCounts = await Promise.all(
+
+      subjects.map(async subject => {
+
+        const {
+          count,
+          error: countError
+        } = await A_GRUP_DB
+
+          .from('questions')
+
+          .select(
+            'id',
+            {
+              count: 'exact',
+              head: true
+            }
+          )
+
+          .eq(
+            'subject_id',
+            subject.id
+          )
+
+          .eq(
+            'status',
+            'published'
+          );
 
 
-// Ders kartlarını oluştur
-document.getElementById('agrupSubjects').innerHTML =
-  subjectsWithCounts.map(subject => `
-    <button
-      class="btn secondary agrupSubjectButton"
-      data-subject="${temiz(subject.name)}"
-      style="
-        width:100%;
-        min-height:68px;
-        text-align:left;
-      "
-    >
-      <div style="font-weight:700;">
-        ${temiz(subject.name)}
-      </div>
+        return {
 
-      <div style="
-        margin-top:6px;
-        font-size:13px;
-        opacity:.70;
-      ">
-        ${subject.questionCount} yayımlanmış soru
-      </div>
-    </button>
-  `).join('');
+          ...subject,
+
+          questionCount:
+            countError
+              ? 0
+              : (count || 0)
+
+        };
+
+      })
+
+    );
+
+
+    // ==================================================
+    // DERS KARTLARI
+    // ==================================================
+
+    document
+      .getElementById('agrupSubjects')
+      .innerHTML = subjectsWithCounts
+
+      .map(subject => `
+
+        <button
+          type="button"
+          class="btn secondary agrupSubjectButton"
+          data-subject="${temiz(subject.name)}"
+          style="
+            width:100%;
+            min-height:68px;
+            text-align:left;
+          "
+        >
+
+          <div style="font-weight:700;">
+            ${temiz(subject.name)}
+          </div>
+
+          <div
+            style="
+              margin-top:6px;
+              font-size:13px;
+              opacity:.70;
+            "
+          >
+
+            ${subject.questionCount}
+            yayımlanmış soru
+
+          </div>
+
+        </button>
+
+      `)
+
+      .join('');
+
+
     document
       .querySelectorAll('.agrupSubjectButton')
       .forEach(button => {
 
-        button.onclick = () => {
-          AGrupQuiz(button.dataset.subject);
+        button.onclick = event => {
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          AGrupQuiz(
+            button.dataset.subject
+          );
+
         };
 
       });
 
+
     return;
+
   }
 
 
-  // --------------------------------------------------
-  // 2. SEÇİLEN DERSİN SORU EKRANI
-  // --------------------------------------------------
+  // ==================================================
+  // 2. SORU EKRANI
+  // ==================================================
 
   quiz.innerHTML = `
     <header>
+
       <div>
-        <div class="eyebrow" id="quizEyebrow">
+
+        <div
+          class="eyebrow"
+          id="quizEyebrow"
+        >
           ${temiz(selectedSubject)}
         </div>
 
-        <div class="title">Soru Çöz</div>
+        <div class="title">
+          Soru Çöz
+        </div>
 
-        <div class="sub" id="agrupInfo">
+        <div
+          class="sub"
+          id="agrupInfo"
+        >
           Sorular yükleniyor...
         </div>
+
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+        "
+      >
 
         <button
+          type="button"
           class="btn secondary"
           id="agrupBack"
         >
@@ -279,6 +425,7 @@ document.getElementById('agrupSubjects').innerHTML =
         </button>
 
         <button
+          type="button"
           class="btn secondary"
           id="agrupRefresh"
         >
@@ -286,109 +433,179 @@ document.getElementById('agrupSubjects').innerHTML =
         </button>
 
       </div>
+
     </header>
+
 
     <div class="card">
 
       <div class="progress">
+
         <i
           id="agrupProgress"
           style="width:0%"
         ></i>
+
       </div>
 
+
       <div id="agrupQuestion">
+
         <p class="sub">
-          ${temiz(selectedSubject)} soruları yükleniyor...
+          ${temiz(selectedSubject)}
+          soruları yükleniyor...
         </p>
+
       </div>
 
     </div>
   `;
 
 
-  document.getElementById('agrupBack').onclick = () => {
-    AGrupQuiz();
-  };
+  // ==================================================
+  // DERS DEĞİŞTİR
+  // ==================================================
+
+  document
+    .getElementById('agrupBack')
+    .onclick = event => {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      AGrupQuiz();
+
+    };
 
 
-  document.getElementById('agrupRefresh').onclick = () => {
-    AGrupQuiz(selectedSubject);
-  };
+  // ==================================================
+  // YENİ SORULAR
+  // ==================================================
+
+  document
+    .getElementById('agrupRefresh')
+    .onclick = event => {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      AGrupQuiz(selectedSubject);
+
+    };
 
 
-  // --------------------------------------------------
-  // 3. SEÇİLEN DERSİN ID'SİNİ BUL
-  // --------------------------------------------------
+  // ==================================================
+  // 3. DERS ID'SİNİ BUL
+  // ==================================================
 
-  const { data: subject, error: subjectError } =
-    await A_GRUP_DB
-      .from('subjects')
-      .select('id,name')
-      .eq('name', selectedSubject)
-      .single();
+  const {
+    data: subject,
+    error: subjectError
+  } = await A_GRUP_DB
+
+    .from('subjects')
+
+    .select('id,name')
+
+    .eq(
+      'name',
+      selectedSubject
+    )
+
+    .single();
 
 
   if (subjectError || !subject) {
 
-    document.getElementById('agrupQuestion').innerHTML = `
-      <div class="ai">
-        <b>Ders alınamadı.</b>
-        <p>
-          ${temiz(
-            subjectError
-              ? subjectError.message
-              : 'Ders bulunamadı.'
-          )}
-        </p>
-      </div>
-    `;
+    document
+      .getElementById('agrupQuestion')
+      .innerHTML = `
+        <div class="ai">
+
+          <b>
+            Ders alınamadı.
+          </b>
+
+          <p>
+            ${temiz(
+              subjectError
+                ? subjectError.message
+                : 'Ders bulunamadı.'
+            )}
+          </p>
+
+        </div>
+      `;
 
     return;
+
   }
 
 
-  // --------------------------------------------------
-  // 4. O DERSE AİT YAYINLANMIŞ SORULARI GETİR
-  // --------------------------------------------------
+  // ==================================================
+  // 4. YAYIMLANMIŞ SORULARI GETİR
+  // ==================================================
 
-  const { data, error } =
-    await A_GRUP_DB
-      .from('questions')
-      .select(`
-        id,
-        question_text,
-        option_a,
-        option_b,
-        option_c,
-        option_d,
-        option_e,
-        correct_answer,
-        explanation,
-        difficulty,
-        topics(name)
-      `)
-      .eq('subject_id', subject.id)
-      .eq('status', 'published')
-      .limit(1000);
+  const {
+    data,
+    error
+  } = await A_GRUP_DB
+
+    .from('questions')
+
+    .select(`
+      id,
+      question_text,
+      option_a,
+      option_b,
+      option_c,
+      option_d,
+      option_e,
+      correct_answer,
+      explanation,
+      difficulty,
+      topics(name)
+    `)
+
+    .eq(
+      'subject_id',
+      subject.id
+    )
+
+    .eq(
+      'status',
+      'published'
+    )
+
+    .limit(1000);
 
 
   if (error) {
 
-    document.getElementById('agrupQuestion').innerHTML = `
-      <div class="ai">
-        <b>Sorular alınamadı.</b>
-        <p>${temiz(error.message)}</p>
-      </div>
-    `;
+    document
+      .getElementById('agrupQuestion')
+      .innerHTML = `
+        <div class="ai">
+
+          <b>
+            Sorular alınamadı.
+          </b>
+
+          <p>
+            ${temiz(error.message)}
+          </p>
+
+        </div>
+      `;
 
     return;
+
   }
 
 
-  // --------------------------------------------------
-  // 5. SORULARI KARIŞTIR VE 20 SORULUK QUIZ OLUŞTUR
-  // --------------------------------------------------
+  // ==================================================
+  // 5. 20 SORULUK QUIZ OLUŞTUR
+  // ==================================================
 
   const sorular = [...(data || [])]
     .sort(() => Math.random() - 0.5)
@@ -397,28 +614,110 @@ document.getElementById('agrupSubjects').innerHTML =
 
   if (!sorular.length) {
 
-    document.getElementById('agrupInfo').textContent =
-      selectedSubject;
+    document
+      .getElementById('agrupInfo')
+      .textContent = selectedSubject;
 
-    document.getElementById('agrupQuestion').innerHTML = `
-      <div class="ai">
-        <b>Bu derste yayımlanmış soru bulunamadı.</b>
-        <p>
-          Supabase'de bu derse ait
-          <b>published</b> durumunda soru bulunmuyor.
-        </p>
-      </div>
-    `;
+
+    document
+      .getElementById('agrupQuestion')
+      .innerHTML = `
+        <div class="ai">
+
+          <b>
+            Bu derste yayımlanmış soru bulunamadı.
+          </b>
+
+          <p>
+            Supabase'de bu derse ait
+            <b>published</b>
+            durumunda soru bulunmuyor.
+          </p>
+
+        </div>
+      `;
 
     return;
+
   }
 
 
+  // ==================================================
+  // SORU NUMARASI
+  // ==================================================
+
   let sira = 0;
 
-  function sayaciGuncelle() {
-    sayaciGuncelle();
 
+  // ==================================================
+  // 6. SORUYU GÖSTER
+  // ==================================================
+
+  function goster() {
+
+    const q = sorular[sira];
+
+    if (!q) return;
+
+
+    const konu =
+      q.topics?.name ||
+      'Genel';
+
+
+    const quizEyebrow =
+      document.getElementById(
+        'quizEyebrow'
+      );
+
+
+    if (quizEyebrow) {
+
+      quizEyebrow.textContent =
+        selectedSubject;
+
+    }
+
+
+    // ==================================================
+    // SAYAÇ
+    // ==================================================
+
+    const bilgiAlani =
+      document.getElementById(
+        'agrupInfo'
+      );
+
+
+    if (bilgiAlani) {
+
+      bilgiAlani.innerHTML =
+        `<strong>Soru ${sira + 1} / ${sorular.length}</strong> · Toplam soru havuzu: ${data.length} · Konu: ${temiz(konu)}`;
+
+    }
+
+
+    // ==================================================
+    // İLERLEME ÇUBUĞU
+    // ==================================================
+
+    const progress =
+      document.getElementById(
+        'agrupProgress'
+      );
+
+
+    if (progress) {
+
+      progress.style.width =
+        `${((sira + 1) / sorular.length) * 100}%`;
+
+    }
+
+
+    // ==================================================
+    // ŞIKLAR
+    // ==================================================
 
     const secenekler = [
       ['A', q.option_a],
@@ -429,42 +728,70 @@ document.getElementById('agrupSubjects').innerHTML =
     ];
 
 
-    document.getElementById('agrupQuestion').innerHTML = `
+    const soruAlani =
+      document.getElementById(
+        'agrupQuestion'
+      );
+
+
+    if (!soruAlani) return;
+
+
+    soruAlani.innerHTML = `
 
       <div class="question">
         ${temiz(q.question_text)}
       </div>
 
+
       <div id="agrupOptions">
 
-        ${secenekler.map(([harf, metin]) => `
+        ${secenekler
 
-          <button
-            class="option"
-            data-answer="${harf}"
-          >
-            <b>${harf})</b>
-            ${temiz(metin)}
-          </button>
+          .map(([harf, metin]) => `
 
-        `).join('')}
+            <button
+              type="button"
+              class="option"
+              data-answer="${harf}"
+            >
+
+              <b>${harf})</b>
+
+              ${temiz(metin)}
+
+            </button>
+
+          `)
+
+          .join('')}
 
       </div>
+
 
       <div
         id="agrupAI"
         class="ai hidden"
       ></div>
-
     `;
 
 
     document
-      .querySelectorAll('#agrupOptions .option')
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
       .forEach(button => {
 
-        button.onclick = () => {
-          cevapla(button, q);
+        button.onclick = event => {
+
+          event.preventDefault();
+          event.stopPropagation();
+
+          cevapla(
+            button,
+            q
+          );
+
         };
 
       });
@@ -472,18 +799,24 @@ document.getElementById('agrupSubjects').innerHTML =
   }
 
 
-  // --------------------------------------------------
+  // ==================================================
   // 7. CEVABI KONTROL ET
-  // --------------------------------------------------
+  // ==================================================
 
   function cevapla(button, q) {
 
     const secilen =
-      button.dataset.answer;
+      String(
+        button.dataset.answer || ''
+      )
+        .trim()
+        .toUpperCase();
 
 
     const dogruCevap =
-      String(q.correct_answer || '')
+      String(
+        q.correct_answer || ''
+      )
         .trim()
         .toUpperCase();
 
@@ -492,14 +825,20 @@ document.getElementById('agrupSubjects').innerHTML =
       secilen === dogruCevap;
 
 
+    // Şıkları kilitle
+
     document
-      .querySelectorAll('#agrupOptions .option')
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
       .forEach(option => {
 
         option.disabled = true;
 
       });
 
+
+    // Seçilen şıkkı işaretle
 
     button.classList.add(
       dogru
@@ -508,70 +847,122 @@ document.getElementById('agrupSubjects').innerHTML =
     );
 
 
+    // Doğru şıkkı göster
+
     document
-      .querySelectorAll('#agrupOptions .option')
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
       .forEach(option => {
 
+        const optionAnswer =
+          String(
+            option.dataset.answer || ''
+          )
+            .trim()
+            .toUpperCase();
+
+
         if (
-          option.dataset.answer === dogruCevap
+          optionAnswer ===
+          dogruCevap
         ) {
 
-          option.classList.add('correct');
+          option.classList.add(
+            'correct'
+          );
 
         }
 
       });
 
 
+    // ==================================================
+    // AÇIKLAMA
+    // ==================================================
+
     const ai =
-      document.getElementById('agrupAI');
+      document.getElementById(
+        'agrupAI'
+      );
 
 
-    ai.classList.remove('hidden');
+    if (!ai) return;
+
+
+    ai.classList.remove(
+      'hidden'
+    );
 
 
     ai.innerHTML = `
 
       <b>
+
         ${
           dogru
             ? '✅ Doğru!'
             : '❌ Yanlış.'
         }
+
       </b>
+
 
       ${
         !dogru
-          ? `<p>Doğru cevap: <b>${temiz(dogruCevap)}</b></p>`
+
+          ? `
+            <p>
+
+              Doğru cevap:
+
+              <b>
+                ${temiz(dogruCevap)}
+              </b>
+
+            </p>
+          `
+
           : ''
       }
 
+
       <p>
+
         ${temiz(
           q.explanation ||
           'Bu soru için açıklama bulunmuyor.'
         )}
+
       </p>
+
 
       <p>
 
         <span class="pill">
+
           ${temiz(
             q.topics?.name ||
             'Genel'
           )}
+
         </span>
 
+
         <span class="pill">
+
           ${temiz(
             q.difficulty ||
             ''
           )}
+
         </span>
 
       </p>
 
+
       <button
+        type="button"
         class="btn"
         id="agrupNext"
       >
@@ -583,49 +974,62 @@ document.getElementById('agrupSubjects').innerHTML =
         }
 
       </button>
-
     `;
 
 
-    document.getElementById('agrupNext').onclick = (event) => {
+    // ==================================================
+    // 8. SONRAKİ SORU
+    // ==================================================
+
+    const nextButton =
+      document.getElementById(
+        'agrupNext'
+      );
+
+
+    if (!nextButton) return;
+
+
+    nextButton.onclick = event => {
+
       event.preventDefault();
       event.stopPropagation();
 
-      if (sira < sorular.length - 1) {
-        sira = sira + 1;
+
+      if (
+        sira <
+        sorular.length - 1
+      ) {
+
+        // Soru numarasını artır
+        sira += 1;
+
+        // Yeni soruyu göster.
+        // Sayaç da burada yeniden çizilir.
         goster();
+
       } else {
-        AGrupQuiz(selectedSubject);
+
+        // 20. sorudan sonra
+        // yeni quiz oluştur
+        AGrupQuiz(
+          selectedSubject
+        );
+
       }
+
     };
 
   }
 
 
-  // --------------------------------------------------
-  // 8. HTML GÜVENLİĞİ
-  // --------------------------------------------------
+  // ==================================================
+  // 9. İLK SORUYU GÖSTER
+  // ==================================================
 
-  function temiz(value) {
-
-    return String(value ?? '')
-      .replace(
-        /[&<>"']/g,
-        character => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        })[character]
-      );
-
-  }
-
-
-  // İlk soruyu göster
   goster();
-} 
+
+}
 
 </script>
 </body>
