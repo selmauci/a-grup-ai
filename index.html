@@ -4,139 +4,1060 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>A-GRUP AI — KPSS A Grubu AI Koçu</title>
+
 <style>
-:root{--p:#5b4bdb;--p2:#7568ee;--ink:#17213b;--muted:#6d7890;--bg:#f5f7fc;--card:#fff;--line:#e6e9f2;--good:#19a974;--bad:#e34f61}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-.app{display:flex;min-height:100vh}.side{width:240px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;position:fixed;inset:0 auto 0 0}
-.logo{font-size:24px;font-weight:800;color:#1d2a52;margin:4px 10px 28px}.logo span{color:var(--p)}
-.nav button{width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;margin:3px 0;color:#5d6880;cursor:pointer;font-size:14px}.nav button.active,.nav button:hover{background:#efedff;color:var(--p);font-weight:700}
-.user{position:absolute;bottom:20px;left:16px;right:16px;padding:12px;background:#f7f8fc;border-radius:12px;font-size:13px}
-.main{margin-left:240px;width:calc(100% - 240px);padding:28px 36px;max-width:1400px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.eyebrow{font-size:13px;color:var(--p);font-weight:700}.title{font-size:28px;font-weight:800;margin:4px 0}.sub{color:var(--muted)}
-.btn{border:0;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:11px 17px;border-radius:10px;font-weight:700;cursor:pointer}.btn.secondary{background:#fff;color:var(--p);border:1px solid #d9d6ff}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 3px 14px rgba(30,40,80,.04)}.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
-.metric{font-size:30px;font-weight:800;margin-top:8px}.pill{display:inline-block;padding:5px 9px;border-radius:99px;background:#efedff;color:var(--p);font-size:12px;font-weight:700}
-.task{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}.task small{display:block;color:var(--muted);margin-top:4px}
-.progress{height:9px;background:#eceef5;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--p),#8b7df4);border-radius:99px}
-.bar{height:11px;background:#eceef5;border-radius:8px;margin:8px 0 14px;overflow:hidden}.bar i{display:block;height:100%;background:#6b5ee7}
-.view{display:none}.view.active{display:block}
-.question{font-size:19px;font-weight:700;line-height:1.5;margin:22px 0}.option{display:block;width:100%;padding:14px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:11px;margin:9px 0;cursor:pointer}.option:hover{border-color:var(--p)}.option.correct{border-color:var(--good);background:#effbf6}.option.wrong{border-color:var(--bad);background:#fff1f3}
-.ai{margin-top:18px;background:#f4f2ff;border:1px solid #ddd9ff;border-radius:13px;padding:16px;line-height:1.6}.hidden{display:none}
-.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:14px}.red{color:var(--bad);font-weight:700}.green{color:var(--good);font-weight:700}
-.planrow{display:grid;grid-template-columns:90px 1fr 70px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line)}
-@media(max-width:900px){.side{width:190px}.main{margin-left:190px;width:calc(100% - 190px);padding:20px}.span4,.span6,.span8{grid-column:span 12}}
+:root{
+  --p:#5b4bdb;
+  --p2:#7568ee;
+  --ink:#17213b;
+  --muted:#6d7890;
+  --bg:#f5f7fc;
+  --card:#fff;
+  --line:#e6e9f2;
+  --good:#19a974;
+  --bad:#e34f61
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink)
+}
+
+.app{
+  display:flex;
+  min-height:100vh
+}
+
+.side{
+  width:240px;
+  background:#fff;
+  border-right:1px solid var(--line);
+  padding:24px 16px;
+  position:fixed;
+  inset:0 auto 0 0
+}
+
+.logo{
+  font-size:24px;
+  font-weight:800;
+  color:#1d2a52;
+  margin:4px 10px 28px
+}
+
+.logo span{
+  color:var(--p)
+}
+
+.nav button{
+  width:100%;
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:12px 14px;
+  border-radius:10px;
+  margin:3px 0;
+  color:#5d6880;
+  cursor:pointer;
+  font-size:14px
+}
+
+.nav button.active,
+.nav button:hover{
+  background:#efedff;
+  color:var(--p);
+  font-weight:700
+}
+
+.user{
+  position:absolute;
+  bottom:20px;
+  left:16px;
+  right:16px;
+  padding:12px;
+  background:#f7f8fc;
+  border-radius:12px;
+  font-size:13px
+}
+
+.main{
+  margin-left:240px;
+  width:calc(100% - 240px);
+  padding:28px 36px;
+  max-width:1400px
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px
+}
+
+.eyebrow{
+  font-size:13px;
+  color:var(--p);
+  font-weight:700
+}
+
+.title{
+  font-size:28px;
+  font-weight:800;
+  margin:4px 0
+}
+
+.sub{
+  color:var(--muted)
+}
+
+.btn{
+  border:0;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  color:#fff;
+  padding:11px 17px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.btn.secondary{
+  background:#fff;
+  color:var(--p);
+  border:1px solid #d9d6ff
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:18px
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 3px 14px rgba(30,40,80,.04)
+}
+
+.span4{grid-column:span 4}
+.span6{grid-column:span 6}
+.span8{grid-column:span 8}
+.span12{grid-column:span 12}
+
+.metric{
+  font-size:30px;
+  font-weight:800;
+  margin-top:8px
+}
+
+.pill{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:99px;
+  background:#efedff;
+  color:var(--p);
+  font-size:12px;
+  font-weight:700
+}
+
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid var(--line)
+}
+
+.task:last-child{
+  border-bottom:0
+}
+
+.task small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px
+}
+
+.progress{
+  height:9px;
+  background:#eceef5;
+  border-radius:99px;
+  overflow:hidden
+}
+
+.progress>i{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,var(--p),#8b7df4);
+  border-radius:99px
+}
+
+.bar{
+  height:11px;
+  background:#eceef5;
+  border-radius:8px;
+  margin:8px 0 14px;
+  overflow:hidden
+}
+
+.bar i{
+  display:block;
+  height:100%;
+  background:#6b5ee7
+}
+
+.view{
+  display:none
+}
+
+.view.active{
+  display:block
+}
+
+.question{
+  font-size:19px;
+  font-weight:700;
+  line-height:1.5;
+  margin:22px 0
+}
+
+.option{
+  display:block;
+  width:100%;
+  padding:14px;
+  text-align:left;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  margin:9px 0;
+  cursor:pointer
+}
+
+.option:hover{
+  border-color:var(--p)
+}
+
+.option.correct{
+  border-color:var(--good);
+  background:#effbf6
+}
+
+.option.wrong{
+  border-color:var(--bad);
+  background:#fff1f3
+}
+
+.ai{
+  margin-top:18px;
+  background:#f4f2ff;
+  border:1px solid #ddd9ff;
+  border-radius:13px;
+  padding:16px;
+  line-height:1.6
+}
+
+.hidden{
+  display:none
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse
+}
+
+.table th,
+.table td{
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  font-size:14px
+}
+
+.red{
+  color:var(--bad);
+  font-weight:700
+}
+
+.green{
+  color:var(--good);
+  font-weight:700
+}
+
+.planrow{
+  display:grid;
+  grid-template-columns:90px 1fr 70px;
+  gap:14px;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid var(--line)
+}
+
+@media(max-width:900px){
+  .side{width:190px}
+
+  .main{
+    margin-left:190px;
+    width:calc(100% - 190px);
+    padding:20px
+  }
+
+  .span4,
+  .span6,
+  .span8{
+    grid-column:span 12
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
+
 <aside class="side">
-<div class="logo">A-GRUP <span>AI</span></div>
-<div class="nav">
-<button class="active" data-view="home">⌂ Ana Sayfa</button>
-<button data-view="quiz">◉ Soru Çöz</button>
-<button data-view="coach">✦ AI Öğretmen</button>
-<button data-view="mistakes">⚠ Yanlışlarım</button>
-<button data-view="plan">▣ Çalışma Planım</button>
-<button data-view="progress">◔ İlerlemem</button>
+
+<div class="logo">
+A-GRUP <span>AI</span>
 </div>
-<div class="user"><b>Selin</b><br><span style="color:#7a8498">Premium Üye</span></div>
+
+<div class="nav">
+
+<button class="active" data-view="home">
+⌂ Ana Sayfa
+</button>
+
+<button data-view="quiz">
+◉ Soru Çöz
+</button>
+
+<button data-view="coach">
+✦ AI Öğretmen
+</button>
+
+<button data-view="mistakes">
+⚠ Yanlışlarım
+</button>
+
+<button data-view="plan">
+▣ Çalışma Planım
+</button>
+
+<button data-view="progress">
+◔ İlerlemem
+</button>
+
+</div>
+
+<div class="user">
+<b>Selin</b><br>
+<span style="color:#7a8498">
+Premium Üye
+</span>
+</div>
+
 </aside>
 
+
 <main class="main">
+
+
 <section id="home" class="view active">
-<header><div><div class="eyebrow">KPSS A GRUBU</div><div class="title">Günaydın, Selin 👋</div><div class="sub">Bugünkü hedefin: 45 dakikalık odaklı çalışma.</div></div><button class="btn" onclick="show('quiz')">Çalışmaya Başla →</button></header>
+
+<header>
+
+<div>
+
+<div class="eyebrow">
+KPSS A GRUBU
+</div>
+
+<div class="title">
+Günaydın, Selin 👋
+</div>
+
+<div class="sub">
+Bugünkü hedefin: 45 dakikalık odaklı çalışma.
+</div>
+
+</div>
+
+<button
+class="btn"
+onclick="show('quiz'); AGrupQuiz();"
+>
+Çalışmaya Başla →
+</button>
+
+</header>
+
+
 <div class="grid">
-<div class="card span4"><span class="pill">Bugünkü hedef</span><div class="metric">35 / 45 dk</div><div class="progress" style="margin-top:14px"><i style="width:78%"></i></div></div>
-<div class="card span4"><span class="pill">Genel başarı</span><div class="metric">%62</div><div class="sub">Son 30 güne göre +8 puan</div></div>
-<div class="card span4"><span class="pill">Çözülen soru</span><div class="metric">428</div><div class="sub">Bu ay</div></div>
-<div class="card span8"><h3>Bugünkü Görevlerin</h3>
-<div class="task"><div>📚 <b>Hukuka Giriş ve Temel Kavramlar</b><small>10 dk konu tekrarı</small></div><button class="btn secondary" onclick="show('coach')">Başla</button></div>
-<div class="task"><div>🧮 <b>Hukuk</b><small>15 soru · Öncelikli konu</small></div><button class="btn secondary" onclick="show('quiz')">Başla</button></div>
-<div class="task"><div>⚠ <b>Yanlış Tekrarı</b><small>5 soru</small></div><button class="btn secondary" onclick="show('mistakes')">Başla</button></div>
+
+<div class="card span4">
+
+<span class="pill">
+Bugünkü hedef
+</span>
+
+<div class="metric">
+35 / 45 dk
 </div>
-<div class="card span4"><h3>AI Koçunun Notu</h3><p>Hukuka Giriş ve Temel Kavramlar konusunda çalışmaya başladın. Soru sonuçlarına göre eksik olduğun konular belirlenecek ve çalışma planın buna göre güncellenecek.</p><button class="btn" onclick="show('plan')">Planı Gör</button></div>
+
+<div
+class="progress"
+style="margin-top:14px"
+>
+<i style="width:78%"></i>
 </div>
+
+</div>
+
+
+<div class="card span4">
+
+<span class="pill">
+Genel başarı
+</span>
+
+<div class="metric">
+%62
+</div>
+
+<div class="sub">
+Son 30 güne göre +8 puan
+</div>
+
+</div>
+
+
+<div class="card span4">
+
+<span class="pill">
+Çözülen soru
+</span>
+
+<div class="metric">
+428
+</div>
+
+<div class="sub">
+Bu ay
+</div>
+
+</div>
+
+
+<div class="card span8">
+
+<h3>
+Bugünkü Görevlerin
+</h3>
+
+
+<div class="task">
+
+<div>
+📚 <b>Hukuka Giriş ve Temel Kavramlar</b>
+
+<small>
+10 dk konu tekrarı
+</small>
+</div>
+
+<button
+class="btn secondary"
+onclick="show('coach')"
+>
+Başla
+</button>
+
+</div>
+
+
+<div class="task">
+
+<div>
+🧮 <b>Hukuk</b>
+
+<small>
+15 soru · Öncelikli konu
+</small>
+</div>
+
+<button
+class="btn secondary"
+onclick="show('quiz'); AGrupQuiz();"
+>
+Başla
+</button>
+
+</div>
+
+
+<div class="task">
+
+<div>
+⚠ <b>Yanlış Tekrarı</b>
+
+<small>
+5 soru
+</small>
+</div>
+
+<button
+class="btn secondary"
+onclick="show('mistakes')"
+>
+Başla
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card span4">
+
+<h3>
+AI Koçunun Notu
+</h3>
+
+<p>
+Hukuka Giriş ve Temel Kavramlar konusunda çalışmaya başladın.
+Soru sonuçlarına göre eksik olduğun konular belirlenecek ve
+çalışma planın buna göre güncellenecek.
+</p>
+
+<button
+class="btn"
+onclick="show('plan')"
+>
+Planı Gör
+</button>
+
+</div>
+
+</div>
+
 </section>
+
 
 <section id="quiz" class="view">
-  <header>
-    <div>
-      <div class="eyebrow">KPSS A GRUBU</div>
-      <div class="title">Soru Çöz</div>
-      <div class="sub">Ders seçerek çalışmaya başla.</div>
-    </div>
-  </header>
 
-  <div class="card">
-    <div id="agrupQuestion">
-      <p class="sub">Dersler yükleniyor...</p>
-    </div>
-  </div>
+<header>
+
+<div>
+
+<div class="eyebrow">
+KPSS A GRUBU
+</div>
+
+<div class="title">
+Soru Çöz
+</div>
+
+<div class="sub">
+Ders seçerek çalışmaya başla.
+</div>
+
+</div>
+
+</header>
+
+
+<div class="card">
+
+<div id="agrupQuestion">
+
+<p class="sub">
+Dersler yükleniyor...
+</p>
+
+</div>
+
+</div>
+
 </section>
+
 
 <section id="coach" class="view">
-<header><div><div class="eyebrow">AI ÖĞRETMEN</div><div class="title">Para-Banka: 5 Dakikalık Tekrar</div><div class="sub">Son hatalarına göre kişiselleştirildi.</div></div></header>
-<div class="card"><h3>💡 Para arzı ve faiz ilişkisi</h3><p>Para arzındaki değişim ile faiz oranı arasındaki ilişkiyi anlamak için önce para piyasasında arz ve talebin nasıl kesiştiğini düşün.</p>
-<div class="ai"><b>🤖 Sana özel anlatım</b><p>Son 3 testinde bu konuyla ilgili iki soruda kavramları ters eşleştirdin. Bu yüzden önce temel ilişkiyi kuruyoruz, ardından benzer sorular çözeceğiz.</p></div>
-<h3>Şimdi mini kontrol</h3><p>Para arzı artarken, diğer koşullar sabitken faiz oranında hangi yönde değişim beklenir?</p><button class="option" onclick="this.innerHTML='✅ Doğru! Para arzındaki artış faiz oranı üzerinde aşağı yönlü baskı oluşturabilir.'">A) Düşüş yönünde</button><button class="option">B) Artış yönünde</button></div>
+
+<header>
+
+<div>
+
+<div class="eyebrow">
+AI ÖĞRETMEN
+</div>
+
+<div class="title">
+Para-Banka: 5 Dakikalık Tekrar
+</div>
+
+<div class="sub">
+Son hatalarına göre kişiselleştirildi.
+</div>
+
+</div>
+
+</header>
+
+
+<div class="card">
+
+<h3>
+💡 Para arzı ve faiz ilişkisi
+</h3>
+
+<p>
+Para arzındaki değişim ile faiz oranı arasındaki ilişkiyi
+anlamak için önce para piyasasında arz ve talebin nasıl
+kesiştiğini düşün.
+</p>
+
+
+<div class="ai">
+
+<b>
+🤖 Sana özel anlatım
+</b>
+
+<p>
+Son 3 testinde bu konuyla ilgili iki soruda kavramları ters
+eşleştirdin. Bu yüzden önce temel ilişkiyi kuruyoruz,
+ardından benzer sorular çözeceğiz.
+</p>
+
+</div>
+
+
+<h3>
+Şimdi mini kontrol
+</h3>
+
+<p>
+Para arzı artarken, diğer koşullar sabitken faiz oranında
+hangi yönde değişim beklenir?
+</p>
+
+<button
+class="option"
+onclick="this.innerHTML='✅ Doğru! Para arzındaki artış faiz oranı üzerinde aşağı yönlü baskı oluşturabilir.'"
+>
+A) Düşüş yönünde
+</button>
+
+<button class="option">
+B) Artış yönünde
+</button>
+
+</div>
+
 </section>
+
 
 <section id="mistakes" class="view">
-<header><div><div class="eyebrow">PERFORMANS</div><div class="title">Yanlışlarım ve Analiz</div><div class="sub">Son 30 gündeki hataların.</div></div></header>
-<div class="grid">
-<div class="card span6"><h3>Hata Türleri</h3><p>🟣 Kavram karıştırma <b>%42</b></p><div class="bar"><i style="width:42%"></i></div><p>🔵 Formül/hesaplama <b>%25</b></p><div class="bar"><i style="width:25%"></i></div><p>🟢 Bilgi eksiği <b>%18</b></p><div class="bar"><i style="width:18%"></i></div><p>🟠 Dikkat hatası <b>%10</b></p><div class="bar"><i style="width:10%"></i></div></div>
-<div class="card span6"><h3>En Çok Zorlandığın Konular</h3><table class="table"><tr><th>Konu</th><th>Doğru</th><th>Başarı</th></tr><tr><td>Para ve Banka</td><td>7</td><td class="red">%28</td></tr><tr><td>Büyüme Teorisi</td><td>8</td><td class="red">%36</td></tr><tr><td>Kamu Giderleri</td><td>12</td><td>%43</td></tr><tr><td>Vergi Teorisi</td><td>10</td><td>%48</td></tr></table></div>
+
+<header>
+
+<div>
+
+<div class="eyebrow">
+PERFORMANS
 </div>
+
+<div class="title">
+Yanlışlarım ve Analiz
+</div>
+
+<div class="sub">
+Son 30 gündeki hataların.
+</div>
+
+</div>
+
+</header>
+
+
+<div class="grid">
+
+<div class="card span6">
+
+<h3>
+Hata Türleri
+</h3>
+
+<p>
+🟣 Kavram karıştırma <b>%42</b>
+</p>
+
+<div class="bar">
+<i style="width:42%"></i>
+</div>
+
+<p>
+🔵 Formül/hesaplama <b>%25</b>
+</p>
+
+<div class="bar">
+<i style="width:25%"></i>
+</div>
+
+<p>
+🟢 Bilgi eksiği <b>%18</b>
+</p>
+
+<div class="bar">
+<i style="width:18%"></i>
+</div>
+
+<p>
+🟠 Dikkat hatası <b>%10</b>
+</p>
+
+<div class="bar">
+<i style="width:10%"></i>
+</div>
+
+</div>
+
+
+<div class="card span6">
+
+<h3>
+En Çok Zorlandığın Konular
+</h3>
+
+<table class="table">
+
+<tr>
+<th>Konu</th>
+<th>Doğru</th>
+<th>Başarı</th>
+</tr>
+
+<tr>
+<td>Para ve Banka</td>
+<td>7</td>
+<td class="red">%28</td>
+</tr>
+
+<tr>
+<td>Büyüme Teorisi</td>
+<td>8</td>
+<td class="red">%36</td>
+</tr>
+
+<tr>
+<td>Kamu Giderleri</td>
+<td>12</td>
+<td>%43</td>
+</tr>
+
+<tr>
+<td>Vergi Teorisi</td>
+<td>10</td>
+<td>%48</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
 </section>
+
 
 <section id="plan" class="view">
-<header><div><div class="eyebrow">KİŞİSEL PLAN</div><div class="title">Bu Haftanın Çalışma Planı</div><div class="sub">AI, son performansına göre planı otomatik güncelliyor.</div></div></header>
-<div class="card">
-<div class="planrow"><b>Pzt · 16 Eyl</b><span>Para ve Banka · 40 dk</span><span class="green">✓</span></div>
-<div class="planrow"><b>Sal · 17 Eyl</b><span>Büyüme Teorisi · 35 dk</span><span class="green">✓</span></div>
-<div class="planrow"><b>Çar · 18 Eyl</b><span>Maliye — Vergi · 45 dk</span><span>○</span></div>
-<div class="planrow"><b>Per · 19 Eyl</b><span>IS-LM Modeli · 40 dk</span><span>○</span></div>
-<div class="planrow"><b>Cum · 20 Eyl</b><span>Kamu Giderleri · 40 dk</span><span>○</span></div>
-<div class="planrow"><b>Cmt · 21 Eyl</b><span>Genel Tekrar · 60 dk</span><span>○</span></div>
-<div class="planrow"><b>Paz · 22 Eyl</b><span>Deneme Sınavı · 90 dk</span><span>○</span></div>
+
+<header>
+
+<div>
+
+<div class="eyebrow">
+KİŞİSEL PLAN
 </div>
+
+<div class="title">
+Bu Haftanın Çalışma Planı
+</div>
+
+<div class="sub">
+AI, son performansına göre planı otomatik güncelliyor.
+</div>
+
+</div>
+
+</header>
+
+
+<div class="card">
+
+<div class="planrow">
+<b>Pzt · 16 Eyl</b>
+<span>Para ve Banka · 40 dk</span>
+<span class="green">✓</span>
+</div>
+
+<div class="planrow">
+<b>Sal · 17 Eyl</b>
+<span>Büyüme Teorisi · 35 dk</span>
+<span class="green">✓</span>
+</div>
+
+<div class="planrow">
+<b>Çar · 18 Eyl</b>
+<span>Maliye — Vergi · 45 dk</span>
+<span>○</span>
+</div>
+
+<div class="planrow">
+<b>Per · 19 Eyl</b>
+<span>IS-LM Modeli · 40 dk</span>
+<span>○</span>
+</div>
+
+<div class="planrow">
+<b>Cum · 20 Eyl</b>
+<span>Kamu Giderleri · 40 dk</span>
+<span>○</span>
+</div>
+
+<div class="planrow">
+<b>Cmt · 21 Eyl</b>
+<span>Genel Tekrar · 60 dk</span>
+<span>○</span>
+</div>
+
+<div class="planrow">
+<b>Paz · 22 Eyl</b>
+<span>Deneme Sınavı · 90 dk</span>
+<span>○</span>
+</div>
+
+</div>
+
 </section>
+
 
 <section id="progress" class="view">
-<header><div><div class="eyebrow">İLERLEME</div><div class="title">Genel İlerlemen</div><div class="sub">Ders ve konu bazında performansın.</div></div></header>
+
+<header>
+
+<div>
+
+<div class="eyebrow">
+İLERLEME
+</div>
+
+<div class="title">
+Genel İlerlemen
+</div>
+
+<div class="sub">
+Ders ve konu bazında performansın.
+</div>
+
+</div>
+
+</header>
+
+
 <div class="grid">
-<div class="card span6"><h3>Ders Bazında Başarı</h3><p>İktisat · %64</p><div class="bar"><i style="width:64%"></i></div><p>Maliye · %48</p><div class="bar"><i style="width:48%"></i></div><p>Hukuk · %57</p><div class="bar"><i style="width:57%"></i></div><p>Muhasebe · %71</p><div class="bar"><i style="width:71%"></i></div></div>
-<div class="card span6"><h3>AI Koçunun Özeti</h3><p>Son 30 günde toplam 428 soru çözdün. İktisat performansında yükseliş görülüyor; Para-Banka ve Büyüme konuları ise tekrar önceliği taşıyor.</p><span class="pill">Hedef ilerleme: %62</span></div>
+
+<div class="card span6">
+
+<h3>
+Ders Bazında Başarı
+</h3>
+
+<p>
+İktisat · %64
+</p>
+
+<div class="bar">
+<i style="width:64%"></i>
 </div>
+
+<p>
+Maliye · %48
+</p>
+
+<div class="bar">
+<i style="width:48%"></i>
+</div>
+
+<p>
+Hukuk · %57
+</p>
+
+<div class="bar">
+<i style="width:57%"></i>
+</div>
+
+<p>
+Muhasebe · %71
+</p>
+
+<div class="bar">
+<i style="width:71%"></i>
+</div>
+
+</div>
+
+
+<div class="card span6">
+
+<h3>
+AI Koçunun Özeti
+</h3>
+
+<p>
+Son 30 günde toplam 428 soru çözdün.
+İktisat performansında yükseliş görülüyor;
+Para-Banka ve Büyüme konuları ise tekrar önceliği taşıyor.
+</p>
+
+<span class="pill">
+Hedef ilerleme: %62
+</span>
+
+</div>
+
+</div>
+
 </section>
+
 </main>
+
 </div>
+
+
 <script>
-function show(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0)}
-document.querySelectorAll('.nav button').forEach(b => b.onclick = () => {
-  const id = b.dataset.view;
-  show(id);
-  if (id === 'quiz') AGrupQuiz();
-});
-function answer(el,correct){document.querySelectorAll('.option').forEach(x=>x.disabled=true);el.classList.add(correct?'correct':'wrong');if(!correct){document.querySelectorAll('.option')[2].classList.add('correct')}document.getElementById('ai').classList.remove('hidden')}
+
+function show(id){
+
+  document
+    .querySelectorAll('.view')
+    .forEach(view => {
+      view.classList.remove('active');
+    });
+
+  const selectedView =
+    document.getElementById(id);
+
+  if (selectedView) {
+    selectedView.classList.add('active');
+  }
+
+  document
+    .querySelectorAll('.nav button')
+    .forEach(button => {
+
+      button.classList.toggle(
+        'active',
+        button.dataset.view === id
+      );
+
+    });
+
+  window.scrollTo(0,0);
+}
+
+
+document
+  .querySelectorAll('.nav button')
+  .forEach(button => {
+
+    button.onclick = () => {
+
+      const id =
+        button.dataset.view;
+
+      show(id);
+
+      if (id === 'quiz') {
+        AGrupQuiz();
+      }
+
+    };
+
+  });
+
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 <script>
-const A_GRUP_SUPABASE_URL = 'https://ekmqcznrjebiowuaysbe.supabase.co';
-const A_GRUP_SUPABASE_KEY = 'sb_publishable_uT7QjXuIQpKbmKFXCfEAPg_egyYi4X0';
-  const SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
-  window.SUPABASE_ANON_KEY = A_GRUP_SUPABASE_KEY;
 
-const A_GRUP_DB = window.supabase.createClient(
-  A_GRUP_SUPABASE_URL,
-  A_GRUP_SUPABASE_KEY
-);
-async function AGrupQuiz(selectedSubject = null) {
+const A_GRUP_SUPABASE_URL =
+  'https://ekmqcznrjebiowuaysbe.supabase.co';
 
-  const quiz = document.getElementById('quiz');
+const A_GRUP_SUPABASE_KEY =
+  'sb_publishable_uT7QjXuIQpKbmKFXCfEAPg_egyYi4X0';
+
+const SUPABASE_ANON_KEY =
+  A_GRUP_SUPABASE_KEY;
+
+window.SUPABASE_ANON_KEY =
+  A_GRUP_SUPABASE_KEY;
+
+
+const A_GRUP_DB =
+  window.supabase.createClient(
+    A_GRUP_SUPABASE_URL,
+    A_GRUP_SUPABASE_KEY
+  );
+
+
+// ==================================================
+// QUIZ DURUMU
+// ==================================================
+//
+// Burada seçilen 20 soru ve mevcut soru numarası
+// AGrupQuiz yeniden çağrılsa bile korunur.
+//
+// Bu sayede:
+// 1 / 20
+// 2 / 20
+// 3 / 20
+// ...
+// 20 / 20
+//
+// şeklinde ilerler.
+// ==================================================
+
+const A_GRUP_QUIZ_STATE = {
+
+  subject:null,
+
+  questions:[],
+
+  index:0,
+
+  poolSize:0
+
+};
+
+
+async function AGrupQuiz(
+  selectedSubject = null,
+  forceNew = false
+) {
+
+  const quiz =
+    document.getElementById('quiz');
+
 
   if (!quiz) return;
+
 
 
   // ==================================================
@@ -146,17 +1067,27 @@ async function AGrupQuiz(selectedSubject = null) {
   function temiz(value) {
 
     return String(value ?? '').replace(
+
       /[&<>"']/g,
+
       character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
+
+        '&':'&amp;',
+
+        '<':'&lt;',
+
+        '>':'&gt;',
+
+        '"':'&quot;',
+
+        "'":'&#039;'
+
       })[character]
+
     );
 
   }
+
 
 
   // ==================================================
@@ -165,7 +1096,9 @@ async function AGrupQuiz(selectedSubject = null) {
 
   if (!selectedSubject) {
 
+
     quiz.innerHTML = `
+
       <header>
 
         <div>
@@ -193,11 +1126,13 @@ async function AGrupQuiz(selectedSubject = null) {
           Dersler
         </h3>
 
+
         <div
           id="agrupSubjects"
           style="
             display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+            grid-template-columns:
+            repeat(auto-fit,minmax(210px,1fr));
             gap:12px;
             margin-top:18px;
           "
@@ -210,23 +1145,32 @@ async function AGrupQuiz(selectedSubject = null) {
         </div>
 
       </div>
+
     `;
 
 
+
     const {
-      data: subjects,
-      error: subjectsError
-    } = await A_GRUP_DB
-      .from('subjects')
-      .select('id,name')
-      .order('id');
+      data:subjects,
+      error:subjectsError
+    } =
+      await A_GRUP_DB
+
+        .from('subjects')
+
+        .select('id,name')
+
+        .order('id');
+
 
 
     if (subjectsError) {
 
+
       document
         .getElementById('agrupSubjects')
         .innerHTML = `
+
           <div class="ai">
 
             <b>
@@ -238,76 +1182,101 @@ async function AGrupQuiz(selectedSubject = null) {
             </p>
 
           </div>
+
         `;
+
 
       return;
 
     }
 
 
-    if (!subjects || !subjects.length) {
+
+    if (
+      !subjects ||
+      !subjects.length
+    ) {
+
 
       document
         .getElementById('agrupSubjects')
         .innerHTML = `
+
           <div class="ai">
-            <b>Ders bulunamadı.</b>
+
+            <b>
+              Ders bulunamadı.
+            </b>
+
           </div>
+
         `;
+
 
       return;
 
     }
+
 
 
     // ==================================================
     // HER DERSİN YAYIMLANMIŞ SORU SAYISI
     // ==================================================
 
-    const subjectsWithCounts = await Promise.all(
-
-      subjects.map(async subject => {
-
-        const {
-          count,
-          error: countError
-        } = await A_GRUP_DB
-
-          .from('questions')
-
-          .select(
-            'id',
-            {
-              count: 'exact',
-              head: true
-            }
-          )
-
-          .eq(
-            'subject_id',
-            subject.id
-          )
-
-          .eq(
-            'status',
-            'published'
-          );
+    const subjectsWithCounts =
+      await Promise.all(
 
 
-        return {
+        subjects.map(
 
-          ...subject,
+          async subject => {
 
-          questionCount:
-            countError
-              ? 0
-              : (count || 0)
 
-        };
+            const {
+              count,
+              error:countError
+            } =
+              await A_GRUP_DB
 
-      })
+                .from('questions')
 
-    );
+                .select(
+                  'id',
+                  {
+                    count:'exact',
+                    head:true
+                  }
+                )
+
+                .eq(
+                  'subject_id',
+                  subject.id
+                )
+
+                .eq(
+                  'status',
+                  'published'
+                );
+
+
+
+            return {
+
+              ...subject,
+
+              questionCount:
+                countError
+                  ? 0
+                  : (count || 0)
+
+            };
+
+          }
+
+        )
+
+      );
+
 
 
     // ==================================================
@@ -316,61 +1285,106 @@ async function AGrupQuiz(selectedSubject = null) {
 
     document
       .getElementById('agrupSubjects')
-      .innerHTML = subjectsWithCounts
+      .innerHTML =
 
-      .map(subject => `
 
-        <button
-          type="button"
-          class="btn secondary agrupSubjectButton"
-          data-subject="${temiz(subject.name)}"
-          style="
-            width:100%;
-            min-height:68px;
-            text-align:left;
-          "
-        >
+      subjectsWithCounts
+        .map(
 
-          <div style="font-weight:700;">
-            ${temiz(subject.name)}
-          </div>
+          subject => `
 
-          <div
-            style="
-              margin-top:6px;
-              font-size:13px;
-              opacity:.70;
-            "
-          >
 
-            ${subject.questionCount}
-            yayımlanmış soru
+            <button
 
-          </div>
+              type="button"
 
-        </button>
+              class="
+                btn
+                secondary
+                agrupSubjectButton
+              "
 
-      `)
+              data-subject="
+                ${temiz(subject.name)}
+              "
 
-      .join('');
+              style="
+                width:100%;
+                min-height:68px;
+                text-align:left;
+              "
+
+            >
+
+
+              <div
+                style="
+                  font-weight:700;
+                "
+              >
+
+                ${temiz(subject.name)}
+
+              </div>
+
+
+              <div
+                style="
+                  margin-top:6px;
+                  font-size:13px;
+                  opacity:.70;
+                "
+              >
+
+                ${subject.questionCount}
+                yayımlanmış soru
+
+              </div>
+
+
+            </button>
+
+
+          `
+
+        )
+
+        .join('');
+
 
 
     document
-      .querySelectorAll('.agrupSubjectButton')
-      .forEach(button => {
+      .querySelectorAll(
+        '.agrupSubjectButton'
+      )
+      .forEach(
 
-        button.onclick = event => {
+        button => {
 
-          event.preventDefault();
-          event.stopPropagation();
 
-          AGrupQuiz(
-            button.dataset.subject
-          );
+          button.onclick =
+            event => {
 
-        };
 
-      });
+              event.preventDefault();
+
+              event.stopPropagation();
+
+
+              AGrupQuiz(
+
+                button.dataset.subject,
+
+                true
+
+              );
+
+
+            };
+
+        }
+
+      );
 
 
     return;
@@ -378,88 +1392,143 @@ async function AGrupQuiz(selectedSubject = null) {
   }
 
 
+
   // ==================================================
   // 2. SORU EKRANI
   // ==================================================
 
   quiz.innerHTML = `
+
+
     <header>
+
 
       <div>
 
+
         <div
+
           class="eyebrow"
+
           id="quizEyebrow"
+
         >
+
           ${temiz(selectedSubject)}
+
         </div>
+
 
         <div class="title">
+
           Soru Çöz
+
         </div>
 
+
         <div
+
           class="sub"
+
           id="agrupInfo"
+
         >
+
           Sorular yükleniyor...
+
         </div>
+
 
       </div>
 
 
+
       <div
+
         style="
           display:flex;
           gap:8px;
           flex-wrap:wrap;
         "
+
       >
 
-        <button
-          type="button"
-          class="btn secondary"
-          id="agrupBack"
-        >
-          Ders Değiştir
-        </button>
 
         <button
+
           type="button"
+
           class="btn secondary"
-          id="agrupRefresh"
+
+          id="agrupBack"
+
         >
-          Yeni Sorular
+
+          Ders Değiştir
+
         </button>
+
+
+        <button
+
+          type="button"
+
+          class="btn secondary"
+
+          id="agrupRefresh"
+
+        >
+
+          Yeni Sorular
+
+        </button>
+
 
       </div>
+
 
     </header>
 
 
+
     <div class="card">
+
 
       <div class="progress">
 
+
         <i
+
           id="agrupProgress"
+
           style="width:0%"
+
         ></i>
 
+
       </div>
+
 
 
       <div id="agrupQuestion">
 
+
         <p class="sub">
+
           ${temiz(selectedSubject)}
+
           soruları yükleniyor...
+
         </p>
+
 
       </div>
 
+
     </div>
+
   `;
+
 
 
   // ==================================================
@@ -468,14 +1537,33 @@ async function AGrupQuiz(selectedSubject = null) {
 
   document
     .getElementById('agrupBack')
-    .onclick = event => {
+    .onclick =
+      event => {
 
-      event.preventDefault();
-      event.stopPropagation();
 
-      AGrupQuiz();
+        event.preventDefault();
 
-    };
+        event.stopPropagation();
+
+
+        A_GRUP_QUIZ_STATE.subject =
+          null;
+
+        A_GRUP_QUIZ_STATE.questions =
+          [];
+
+        A_GRUP_QUIZ_STATE.index =
+          0;
+
+        A_GRUP_QUIZ_STATE.poolSize =
+          0;
+
+
+        AGrupQuiz();
+
+
+      };
+
 
 
   // ==================================================
@@ -484,14 +1572,23 @@ async function AGrupQuiz(selectedSubject = null) {
 
   document
     .getElementById('agrupRefresh')
-    .onclick = event => {
+    .onclick =
+      event => {
 
-      event.preventDefault();
-      event.stopPropagation();
 
-      AGrupQuiz(selectedSubject);
+        event.preventDefault();
 
-    };
+        event.stopPropagation();
+
+
+        AGrupQuiz(
+          selectedSubject,
+          true
+        );
+
+
+      };
+
 
 
   // ==================================================
@@ -499,47 +1596,68 @@ async function AGrupQuiz(selectedSubject = null) {
   // ==================================================
 
   const {
-    data: subject,
-    error: subjectError
-  } = await A_GRUP_DB
+    data:subject,
+    error:subjectError
+  } =
+    await A_GRUP_DB
 
-    .from('subjects')
+      .from('subjects')
 
-    .select('id,name')
+      .select('id,name')
 
-    .eq(
-      'name',
-      selectedSubject
-    )
+      .eq(
+        'name',
+        selectedSubject
+      )
 
-    .single();
+      .single();
 
 
-  if (subjectError || !subject) {
+
+  if (
+    subjectError ||
+    !subject
+  ) {
+
 
     document
       .getElementById('agrupQuestion')
       .innerHTML = `
+
+
         <div class="ai">
+
 
           <b>
             Ders alınamadı.
           </b>
 
+
           <p>
+
             ${temiz(
+
               subjectError
+
                 ? subjectError.message
+
                 : 'Ders bulunamadı.'
+
             )}
+
           </p>
 
+
         </div>
+
+
       `;
+
 
     return;
 
   }
+
 
 
   // ==================================================
@@ -549,104 +1667,232 @@ async function AGrupQuiz(selectedSubject = null) {
   const {
     data,
     error
-  } = await A_GRUP_DB
+  } =
+    await A_GRUP_DB
 
-    .from('questions')
 
-    .select(`
-      id,
-      question_text,
-      option_a,
-      option_b,
-      option_c,
-      option_d,
-      option_e,
-      correct_answer,
-      explanation,
-      difficulty,
-      topics(name)
-    `)
+      .from('questions')
 
-    .eq(
-      'subject_id',
-      subject.id
-    )
 
-    .eq(
-      'status',
-      'published'
-    )
+      .select(`
 
-    .limit(1000);
+        id,
+
+        question_text,
+
+        option_a,
+
+        option_b,
+
+        option_c,
+
+        option_d,
+
+        option_e,
+
+        correct_answer,
+
+        explanation,
+
+        difficulty,
+
+        topics(name)
+
+      `)
+
+
+      .eq(
+        'subject_id',
+        subject.id
+      )
+
+
+      .eq(
+        'status',
+        'published'
+      )
+
+
+      .limit(1000);
+
 
 
   if (error) {
 
+
     document
       .getElementById('agrupQuestion')
       .innerHTML = `
+
+
         <div class="ai">
+
 
           <b>
             Sorular alınamadı.
           </b>
 
+
           <p>
+
             ${temiz(error.message)}
+
           </p>
 
+
         </div>
+
+
       `;
+
 
     return;
 
   }
 
 
+
   // ==================================================
-  // 5. 20 SORULUK QUIZ OLUŞTUR
+  // 5. 20 SORULUK QUIZ
+  // ==================================================
+  //
+  // Yalnızca:
+  //
+  // - ilk kez ders seçildiğinde
+  // - ders değiştiğinde
+  // - Yeni Sorular tıklandığında
+  //
+  // yeni 20 soru oluşturulur.
+  //
+  // Sonraki Soru tıklanınca yeni quiz oluşturulmaz.
   // ==================================================
 
-  const sorular = [...(data || [])]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 20);
+  if (
+
+    forceNew ||
+
+    A_GRUP_QUIZ_STATE.subject !==
+      selectedSubject ||
+
+    A_GRUP_QUIZ_STATE.questions.length ===
+      0
+
+  ) {
+
+
+    A_GRUP_QUIZ_STATE.subject =
+      selectedSubject;
+
+
+    A_GRUP_QUIZ_STATE.questions =
+      [...(data || [])]
+
+        .sort(
+          () =>
+            Math.random() - 0.5
+        )
+
+        .slice(
+          0,
+          20
+        );
+
+
+    A_GRUP_QUIZ_STATE.index =
+      0;
+
+
+    A_GRUP_QUIZ_STATE.poolSize =
+      (data || []).length;
+
+  }
+
+
+
+  const sorular =
+    A_GRUP_QUIZ_STATE.questions;
+
 
 
   if (!sorular.length) {
 
-    document
-      .getElementById('agrupInfo')
-      .textContent = selectedSubject;
+
+    const bilgi =
+      document.getElementById(
+        'agrupInfo'
+      );
+
+
+    if (bilgi) {
+
+      bilgi.textContent =
+        selectedSubject;
+
+    }
 
 
     document
       .getElementById('agrupQuestion')
       .innerHTML = `
+
+
         <div class="ai">
 
+
           <b>
-            Bu derste yayımlanmış soru bulunamadı.
+
+            Bu derste yayımlanmış
+            soru bulunamadı.
+
           </b>
 
+
           <p>
+
             Supabase'de bu derse ait
+
             <b>published</b>
+
             durumunda soru bulunmuyor.
+
           </p>
 
+
         </div>
+
+
       `;
+
 
     return;
 
   }
+
 
 
   // ==================================================
   // SORU NUMARASI
   // ==================================================
 
-  let sira = 0;
+  let sira =
+    A_GRUP_QUIZ_STATE.index;
+
+
+
+  if (
+    sira < 0 ||
+    sira >= sorular.length
+  ) {
+
+
+    sira = 0;
+
+
+    A_GRUP_QUIZ_STATE.index =
+      0;
+
+  }
+
 
 
   // ==================================================
@@ -655,14 +1901,27 @@ async function AGrupQuiz(selectedSubject = null) {
 
   function goster() {
 
-    const q = sorular[sira];
+
+    const q =
+      sorular[sira];
+
 
     if (!q) return;
+
+
+
+    // Mevcut soru numarasını
+    // global quiz durumuna kaydet.
+
+    A_GRUP_QUIZ_STATE.index =
+      sira;
+
 
 
     const konu =
       q.topics?.name ||
       'Genel';
+
 
 
     const quizEyebrow =
@@ -679,8 +1938,16 @@ async function AGrupQuiz(selectedSubject = null) {
     }
 
 
+
     // ==================================================
     // SAYAÇ
+    // ==================================================
+    //
+    // sira = 0  → Soru 1 / 20
+    // sira = 1  → Soru 2 / 20
+    // sira = 2  → Soru 3 / 20
+    // ...
+    // sira = 19 → Soru 20 / 20
     // ==================================================
 
     const bilgiAlani =
@@ -691,10 +1958,18 @@ async function AGrupQuiz(selectedSubject = null) {
 
     if (bilgiAlani) {
 
+
       bilgiAlani.innerHTML =
-        `<strong>Soru ${sira + 1} / ${sorular.length}</strong> · Toplam soru havuzu: ${data.length} · Konu: ${temiz(konu)}`;
+
+        `<strong>Soru ${sira + 1} / ${sorular.length}</strong>` +
+
+        ` · Toplam soru havuzu: ${A_GRUP_QUIZ_STATE.poolSize}` +
+
+        ` · Konu: ${temiz(konu)}`;
+
 
     }
+
 
 
     // ==================================================
@@ -709,10 +1984,19 @@ async function AGrupQuiz(selectedSubject = null) {
 
     if (progress) {
 
+
       progress.style.width =
-        `${((sira + 1) / sorular.length) * 100}%`;
+
+        `${
+          (
+            (sira + 1) /
+            sorular.length
+          ) * 100
+        }%`;
+
 
     }
+
 
 
     // ==================================================
@@ -720,12 +2004,19 @@ async function AGrupQuiz(selectedSubject = null) {
     // ==================================================
 
     const secenekler = [
-      ['A', q.option_a],
-      ['B', q.option_b],
-      ['C', q.option_c],
-      ['D', q.option_d],
-      ['E', q.option_e]
+
+      ['A',q.option_a],
+
+      ['B',q.option_b],
+
+      ['C',q.option_c],
+
+      ['D',q.option_d],
+
+      ['E',q.option_e]
+
     ];
+
 
 
     const soruAlani =
@@ -737,92 +2028,153 @@ async function AGrupQuiz(selectedSubject = null) {
     if (!soruAlani) return;
 
 
+
     soruAlani.innerHTML = `
 
+
       <div class="question">
+
         ${temiz(q.question_text)}
+
       </div>
+
 
 
       <div id="agrupOptions">
 
-        ${secenekler
 
-          .map(([harf, metin]) => `
+        ${
 
-            <button
-              type="button"
-              class="option"
-              data-answer="${harf}"
-            >
+          secenekler
 
-              <b>${harf})</b>
+            .map(
 
-              ${temiz(metin)}
+              ([harf,metin]) => `
 
-            </button>
 
-          `)
+                <button
 
-          .join('')}
+                  type="button"
+
+                  class="option"
+
+                  data-answer="${harf}"
+
+                >
+
+
+                  <b>
+                    ${harf})
+                  </b>
+
+
+                  ${temiz(metin)}
+
+
+                </button>
+
+
+              `
+
+            )
+
+            .join('')
+
+        }
+
 
       </div>
 
 
+
       <div
+
         id="agrupAI"
+
         class="ai hidden"
+
       ></div>
+
+
     `;
+
 
 
     document
       .querySelectorAll(
         '#agrupOptions .option'
       )
-      .forEach(button => {
+      .forEach(
 
-        button.onclick = event => {
+        button => {
 
-          event.preventDefault();
-          event.stopPropagation();
 
-          cevapla(
-            button,
-            q
-          );
+          button.onclick =
+            event => {
 
-        };
 
-      });
+              event.preventDefault();
+
+              event.stopPropagation();
+
+
+              cevapla(
+                button,
+                q
+              );
+
+
+            };
+
+        }
+
+      );
+
 
   }
+
 
 
   // ==================================================
   // 7. CEVABI KONTROL ET
   // ==================================================
 
-  function cevapla(button, q) {
+  function cevapla(
+    button,
+    q
+  ) {
+
 
     const secilen =
+
       String(
-        button.dataset.answer || ''
+        button.dataset.answer ||
+        ''
       )
+
         .trim()
+
         .toUpperCase();
+
 
 
     const dogruCevap =
+
       String(
-        q.correct_answer || ''
+        q.correct_answer ||
+        ''
       )
+
         .trim()
+
         .toUpperCase();
 
 
+
     const dogru =
-      secilen === dogruCevap;
+      secilen ===
+      dogruCevap;
+
 
 
     // Şıkları kilitle
@@ -831,50 +2183,75 @@ async function AGrupQuiz(selectedSubject = null) {
       .querySelectorAll(
         '#agrupOptions .option'
       )
-      .forEach(option => {
+      .forEach(
 
-        option.disabled = true;
+        option => {
 
-      });
+          option.disabled =
+            true;
+
+        }
+
+      );
+
 
 
     // Seçilen şıkkı işaretle
 
     button.classList.add(
+
       dogru
+
         ? 'correct'
+
         : 'wrong'
+
     );
 
 
-    // Doğru şıkkı göster
+
+    // Doğru cevabı yeşil göster
 
     document
       .querySelectorAll(
         '#agrupOptions .option'
       )
-      .forEach(option => {
+      .forEach(
 
-        const optionAnswer =
-          String(
-            option.dataset.answer || ''
-          )
-            .trim()
-            .toUpperCase();
+        option => {
 
 
-        if (
-          optionAnswer ===
-          dogruCevap
-        ) {
+          const optionAnswer =
 
-          option.classList.add(
-            'correct'
-          );
+            String(
+              option.dataset.answer ||
+              ''
+            )
+
+              .trim()
+
+              .toUpperCase();
+
+
+
+          if (
+            optionAnswer ===
+            dogruCevap
+          ) {
+
+
+            option.classList.add(
+              'correct'
+            );
+
+
+          }
+
 
         }
 
-      });
+      );
+
 
 
     // ==================================================
@@ -890,91 +2267,159 @@ async function AGrupQuiz(selectedSubject = null) {
     if (!ai) return;
 
 
+
     ai.classList.remove(
       'hidden'
     );
 
 
+
     ai.innerHTML = `
+
 
       <b>
 
+
         ${
+
           dogru
+
             ? '✅ Doğru!'
+
             : '❌ Yanlış.'
+
         }
+
 
       </b>
 
 
+
       ${
+
         !dogru
 
           ? `
+
+
             <p>
+
 
               Doğru cevap:
 
+
               <b>
+
                 ${temiz(dogruCevap)}
+
               </b>
 
+
             </p>
+
+
           `
 
           : ''
+
       }
 
 
+
       <p>
 
-        ${temiz(
-          q.explanation ||
-          'Bu soru için açıklama bulunmuyor.'
-        )}
+
+        ${
+
+          temiz(
+
+            q.explanation ||
+
+            'Bu soru için açıklama bulunmuyor.'
+
+          )
+
+        }
+
 
       </p>
 
 
+
       <p>
 
+
         <span class="pill">
 
-          ${temiz(
-            q.topics?.name ||
-            'Genel'
-          )}
+
+          ${
+
+            temiz(
+
+              q.topics?.name ||
+
+              'Genel'
+
+            )
+
+          }
+
 
         </span>
 
 
+
         <span class="pill">
 
-          ${temiz(
-            q.difficulty ||
-            ''
-          )}
+
+          ${
+
+            temiz(
+
+              q.difficulty ||
+
+              ''
+
+            )
+
+          }
+
 
         </span>
+
 
       </p>
+
 
 
       <button
+
         type="button"
+
         class="btn"
+
         id="agrupNext"
+
       >
 
+
         ${
-          sira + 1 < sorular.length
+
+          sira + 1 <
+          sorular.length
+
             ? 'Sonraki Soru →'
+
             : 'Yeni Quiz'
+
         }
 
+
       </button>
+
+
     `;
+
 
 
     // ==================================================
@@ -990,47 +2435,94 @@ async function AGrupQuiz(selectedSubject = null) {
     if (!nextButton) return;
 
 
-    nextButton.onclick = event => {
 
-      event.preventDefault();
-      event.stopPropagation();
+    nextButton.onclick =
+      event => {
 
 
-      if (
-        sira <
-        sorular.length - 1
-      ) {
+        event.preventDefault();
 
-        // Soru numarasını artır
-        sira += 1;
+        event.stopPropagation();
 
-        // Yeni soruyu göster.
-        // Sayaç da burada yeniden çizilir.
-        goster();
 
-      } else {
 
-        // 20. sorudan sonra
-        // yeni quiz oluştur
-        AGrupQuiz(
-          selectedSubject
-        );
+        if (
 
-      }
+          sira <
+          sorular.length - 1
 
-    };
+        ) {
+
+
+          // ------------------------------------------
+          // ÖNEMLİ:
+          // soru numarasını artır.
+          // ------------------------------------------
+
+          sira += 1;
+
+
+          // ------------------------------------------
+          // Global quiz durumuna da yaz.
+          // ------------------------------------------
+
+          A_GRUP_QUIZ_STATE.index =
+            sira;
+
+
+          // ------------------------------------------
+          // Aynı 20 soruluk set içindeki
+          // bir sonraki soruyu çiz.
+          //
+          // AGrupQuiz burada tekrar çağrılmıyor.
+          // ------------------------------------------
+
+          goster();
+
+
+        }
+
+        else {
+
+
+          // ------------------------------------------
+          // 20. sorudan sonra
+          // sıfırdan yeni 20 soru oluştur.
+          // ------------------------------------------
+
+          A_GRUP_QUIZ_STATE.index =
+            0;
+
+
+          AGrupQuiz(
+
+            selectedSubject,
+
+            true
+
+          );
+
+
+        }
+
+
+      };
+
 
   }
 
 
+
   // ==================================================
-  // 9. İLK SORUYU GÖSTER
+  // 9. İLK / MEVCUT SORUYU GÖSTER
   // ==================================================
 
   goster();
 
+
 }
 
 </script>
+
 </body>
 </html>
