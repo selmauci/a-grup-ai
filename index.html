@@ -132,7 +132,14 @@ const A_GRUP_DB = window.supabase.createClient(
   A_GRUP_SUPABASE_URL,
   A_GRUP_SUPABASE_KEY
 );
-async function AGrupQuiz(selectedSubject = null) {
+const A_GRUP_QUIZ_STATE = {
+  subject: null,
+  questions: [],
+  index: 0,
+  poolSize: 0
+};
+
+async function AGrupQuiz(selectedSubject = null, forceNew = false) { 
 
   const quiz = document.getElementById('quiz');
 
@@ -607,9 +614,22 @@ async function AGrupQuiz(selectedSubject = null) {
   // 5. 20 SORULUK QUIZ OLUŞTUR
   // ==================================================
 
-  const sorular = [...(data || [])]
+  if (
+  forceNew ||
+  A_GRUP_QUIZ_STATE.subject !== selectedSubject ||
+  A_GRUP_QUIZ_STATE.questions.length === 0
+) {
+  A_GRUP_QUIZ_STATE.subject = selectedSubject;
+
+  A_GRUP_QUIZ_STATE.questions = [...(data || [])]
     .sort(() => Math.random() - 0.5)
     .slice(0, 20);
+
+  A_GRUP_QUIZ_STATE.index = 0;
+  A_GRUP_QUIZ_STATE.poolSize = (data || []).length;
+}
+
+const sorular = A_GRUP_QUIZ_STATE.questions;
 
 
   if (!sorular.length) {
@@ -645,8 +665,7 @@ async function AGrupQuiz(selectedSubject = null) {
   // ==================================================
   // SORU NUMARASI
   // ==================================================
-
-  let sira = 0;
+let sira = A_GRUP_QUIZ_STATE.index;
 
 
   // ==================================================
@@ -996,25 +1015,21 @@ async function AGrupQuiz(selectedSubject = null) {
       event.stopPropagation();
 
 
-      if (
-        sira <
-        sorular.length - 1
-      ) {
+    if (sira < sorular.length - 1) {
 
-        // Soru numarasını artır
-        sira += 1;
+  sira += 1;
 
-        // Yeni soruyu göster.
-        // Sayaç da burada yeniden çizilir.
-        goster();
+  A_GRUP_QUIZ_STATE.index = sira;
 
-      } else {
+  goster();
 
-        // 20. sorudan sonra
-        // yeni quiz oluştur
-        AGrupQuiz(
-          selectedSubject
-        );
+} else {
+
+  A_GRUP_QUIZ_STATE.index = 0;
+
+  AGrupQuiz(selectedSubject, true);
+
+}
 
       }
 
