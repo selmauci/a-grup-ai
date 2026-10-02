@@ -310,12 +310,17 @@ const A_GRUP_DB=window.supabase.createClient(
   A_GRUP_SUPABASE_KEY
 );
 
-const A_GRUP_QUIZ_STATE={
-  subject:null,
-  questions:[],
-  index:0,
-  poolSize:0
+const A_GRUP_QUIZ_STATE = {
+  subject: null,
+  questions: [],
+  index: Number(sessionStorage.getItem('agrup_quiz_index') || 0),
+  poolSize: 0
 };
+
+function setQuizIndex(newIndex) {
+  A_GRUP_QUIZ_STATE.index = newIndex;
+  sessionStorage.setItem('agrup_quiz_index', String(newIndex));
+}
 
 async function AGrupQuiz(selectedSubject=null,forceNew=false){
 
@@ -592,7 +597,7 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
 
     A_GRUP_QUIZ_STATE.subject=null;
     A_GRUP_QUIZ_STATE.questions=[];
-    A_GRUP_QUIZ_STATE.index=0;
+   setQuizIndex(0);
     A_GRUP_QUIZ_STATE.poolSize=0;
 
     AGrupQuiz();
@@ -707,7 +712,7 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
       .sort(()=>Math.random()-0.5)
       .slice(0,20);
 
-    A_GRUP_QUIZ_STATE.index=0;
+    setQuizIndex(0);
     A_GRUP_QUIZ_STATE.poolSize=(data||[]).length;
   }
 
@@ -1089,7 +1094,7 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
       ) {
 
         // TEK SAYACI 1 ARTIR
-        A_GRUP_QUIZ_STATE.index += 1;
+      setQuizIndex(A_GRUP_QUIZ_STATE.index + 1);
 
         // AYNI QUIZ İÇİNDE SONRAKİ SORUYU GÖSTER
         goster();
@@ -1097,7 +1102,7 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
       } else {
 
         // 20. SORUDAN SONRA YENİ QUIZ
-        A_GRUP_QUIZ_STATE.index = 0;
+        setQuizIndex(0);
 
         AGrupQuiz(
           selectedSubject,
