@@ -736,37 +736,34 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
   }
 
 
-  // ==================================================
+   // ==================================================
   // 6. SORUYU GÖSTER
   // ==================================================
-  //
-  // DÜZELTME:
-  // Artık ayrı bir "sira" değişkeni kullanılmıyor.
-  // Soru numarasının tek kaynağı:
-  // A_GRUP_QUIZ_STATE.index
-  //
-  // ==================================================
 
-  function goster(){
+  function goster() {
 
-    const index=A_GRUP_QUIZ_STATE.index;
+    // TEK SAYAÇ KAYNAĞI
+    const index = A_GRUP_QUIZ_STATE.index;
 
-    const q=sorular[index];
+    const q = sorular[index];
 
-    if(!q)return;
+    if (!q) return;
 
-
-    const konu=
-      q.topics?.name||
+    const konu =
+      q.topics?.name ||
       'Genel';
 
 
-    const quizEyebrow=
-      document.getElementById('quizEyebrow');
+    const quizEyebrow =
+      document.getElementById(
+        'quizEyebrow'
+      );
 
+    if (quizEyebrow) {
 
-    if(quizEyebrow){
-      quizEyebrow.textContent=selectedSubject;
+      quizEyebrow.textContent =
+        selectedSubject;
+
     }
 
 
@@ -774,14 +771,15 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
     // SAYAÇ
     // ==================================================
 
-    const bilgiAlani=
-      document.getElementById('agrupInfo');
+    const bilgiAlani =
+      document.getElementById(
+        'agrupInfo'
+      );
 
+    if (bilgiAlani) {
 
-    if(bilgiAlani){
-
-      bilgiAlani.innerHTML=
-        `<strong>Soru ${index+1} / ${sorular.length}</strong> · Toplam soru havuzu: ${A_GRUP_QUIZ_STATE.poolSize} · Konu: ${temiz(konu)}`;
+      bilgiAlani.innerHTML =
+        `<strong>Soru ${index + 1} / ${sorular.length}</strong> · Toplam soru havuzu: ${A_GRUP_QUIZ_STATE.poolSize} · Konu: ${temiz(konu)}`;
 
     }
 
@@ -790,14 +788,15 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
     // İLERLEME ÇUBUĞU
     // ==================================================
 
-    const progress=
-      document.getElementById('agrupProgress');
+    const progress =
+      document.getElementById(
+        'agrupProgress'
+      );
 
+    if (progress) {
 
-    if(progress){
-
-      progress.style.width=
-        `${((index+1)/sorular.length)*100}%`;
+      progress.style.width =
+        `${((index + 1) / sorular.length) * 100}%`;
 
     }
 
@@ -806,23 +805,24 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
     // ŞIKLAR
     // ==================================================
 
-    const secenekler=[
-      ['A',q.option_a],
-      ['B',q.option_b],
-      ['C',q.option_c],
-      ['D',q.option_d],
-      ['E',q.option_e]
+    const secenekler = [
+      ['A', q.option_a],
+      ['B', q.option_b],
+      ['C', q.option_c],
+      ['D', q.option_d],
+      ['E', q.option_e]
     ];
 
 
-    const soruAlani=
-      document.getElementById('agrupQuestion');
+    const soruAlani =
+      document.getElementById(
+        'agrupQuestion'
+      );
+
+    if (!soruAlani) return;
 
 
-    if(!soruAlani)return;
-
-
-    soruAlani.innerHTML=`
+    soruAlani.innerHTML = `
 
       <div class="question">
         ${temiz(q.question_text)}
@@ -830,18 +830,25 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
 
       <div id="agrupOptions">
 
-        ${secenekler.map(([harf,metin])=>`
+        ${secenekler
 
-          <button
-            type="button"
-            class="option"
-            data-answer="${harf}"
-          >
-            <b>${harf})</b>
-            ${temiz(metin)}
-          </button>
+          .map(([harf, metin]) => `
 
-        `).join('')}
+            <button
+              type="button"
+              class="option"
+              data-answer="${harf}"
+            >
+
+              <b>${harf})</b>
+
+              ${temiz(metin)}
+
+            </button>
+
+          `)
+
+          .join('')}
 
       </div>
 
@@ -852,21 +859,25 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
     `;
 
 
-    document.querySelectorAll('#agrupOptions .option').forEach(button=>{
+    document
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
+      .forEach(button => {
 
-      button.onclick=event=>{
+        button.onclick = event => {
 
-        event.preventDefault();
-        event.stopPropagation();
+          event.preventDefault();
+          event.stopPropagation();
 
-        cevapla(
-          button,
-          q
-        );
+          cevapla(
+            button,
+            q
+          );
 
-      };
+        };
 
-    });
+      });
 
   }
 
@@ -875,129 +886,180 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
   // 7. CEVABI KONTROL ET
   // ==================================================
 
-  function cevapla(button,q){
+  function cevapla(button, q) {
 
-    const secilen=
-      String(button.dataset.answer||'')
+    const secilen =
+      String(
+        button.dataset.answer || ''
+      )
         .trim()
         .toUpperCase();
 
 
-    const dogruCevap=
-      String(q.correct_answer||'')
+    const dogruCevap =
+      String(
+        q.correct_answer || ''
+      )
         .trim()
         .toUpperCase();
 
 
-    const dogru=
-      secilen===dogruCevap;
+    const dogru =
+      secilen === dogruCevap;
 
 
-    document.querySelectorAll('#agrupOptions .option').forEach(option=>{
+    // Şıkları kilitle
 
-      option.disabled=true;
+    document
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
+      .forEach(option => {
 
-    });
+        option.disabled = true;
 
+      });
+
+
+    // Seçilen şıkkı işaretle
 
     button.classList.add(
       dogru
-        ?'correct'
-        :'wrong'
+        ? 'correct'
+        : 'wrong'
     );
 
 
-    document.querySelectorAll('#agrupOptions .option').forEach(option=>{
+    // Doğru şıkkı göster
 
-      const optionAnswer=
-        String(option.dataset.answer||'')
-          .trim()
-          .toUpperCase();
+    document
+      .querySelectorAll(
+        '#agrupOptions .option'
+      )
+      .forEach(option => {
+
+        const optionAnswer =
+          String(
+            option.dataset.answer || ''
+          )
+            .trim()
+            .toUpperCase();
 
 
-      if(optionAnswer===dogruCevap){
+        if (
+          optionAnswer ===
+          dogruCevap
+        ) {
 
-        option.classList.add('correct');
+          option.classList.add(
+            'correct'
+          );
 
-      }
+        }
 
-    });
+      });
 
 
     // ==================================================
     // AÇIKLAMA
     // ==================================================
 
-    const ai=
-      document.getElementById('agrupAI');
+    const ai =
+      document.getElementById(
+        'agrupAI'
+      );
 
 
-    if(!ai)return;
+    if (!ai) return;
 
 
-    ai.classList.remove('hidden');
+    ai.classList.remove(
+      'hidden'
+    );
 
 
-    const currentIndex=
+    const currentIndex =
       A_GRUP_QUIZ_STATE.index;
 
 
-    ai.innerHTML=`
+    ai.innerHTML = `
 
       <b>
+
         ${
           dogru
-            ?'✅ Doğru!'
-            :'❌ Yanlış.'
+            ? '✅ Doğru!'
+            : '❌ Yanlış.'
         }
+
       </b>
+
 
       ${
         !dogru
-          ?`
+
+          ? `
             <p>
+
               Doğru cevap:
-              <b>${temiz(dogruCevap)}</b>
+
+              <b>
+                ${temiz(dogruCevap)}
+              </b>
+
             </p>
           `
-          :''
+
+          : ''
       }
 
+
       <p>
+
         ${temiz(
-          q.explanation||
+          q.explanation ||
           'Bu soru için açıklama bulunmuyor.'
         )}
+
       </p>
+
 
       <p>
 
         <span class="pill">
+
           ${temiz(
-            q.topics?.name||
+            q.topics?.name ||
             'Genel'
           )}
+
         </span>
 
+
         <span class="pill">
+
           ${temiz(
-            q.difficulty||
+            q.difficulty ||
             ''
           )}
+
         </span>
 
       </p>
+
 
       <button
         type="button"
         class="btn"
         id="agrupNext"
       >
+
         ${
-          currentIndex+1<sorular.length
-            ?'Sonraki Soru →'
-            :'Yeni Quiz'
+          currentIndex + 1 < sorular.length
+            ? 'Sonraki Soru →'
+            : 'Yeni Quiz'
         }
+
       </button>
     `;
 
@@ -1006,49 +1068,36 @@ async function AGrupQuiz(selectedSubject=null,forceNew=false){
     // 8. SONRAKİ SORU
     // ==================================================
 
-    const nextButton=
-      document.getElementById('agrupNext');
+    const nextButton =
+      document.getElementById(
+        'agrupNext'
+      );
 
 
-    if(!nextButton)return;
+    if (!nextButton) return;
 
 
-    nextButton.onclick=event=>{
+    nextButton.onclick = event => {
 
       event.preventDefault();
       event.stopPropagation();
 
 
-      if(
-        A_GRUP_QUIZ_STATE.index<
-        sorular.length-1
-      ){
+      if (
+        A_GRUP_QUIZ_STATE.index <
+        sorular.length - 1
+      ) {
 
-        /*
-        ÖRNEK:
-        1. soru = index 0
-        Sonraki Soru -> index 1
-        goster() -> Soru 2 / 20
-        */
+        // TEK SAYACI 1 ARTIR
+        A_GRUP_QUIZ_STATE.index += 1;
 
-        A_GRUP_QUIZ_STATE.index+=1;
-
-        /*
-        Burada AGrupQuiz() çağrılmıyor.
-        Böylece quiz yeniden başlamıyor.
-        Sadece mevcut setin sonraki sorusu çiziliyor.
-        */
-
+        // AYNI QUIZ İÇİNDE SONRAKİ SORUYU GÖSTER
         goster();
 
-      }else{
+      } else {
 
-        /*
-        20. soru tamamlandığında
-        yeni 20 soruluk quiz oluştur.
-        */
-
-        A_GRUP_QUIZ_STATE.index=0;
+        // 20. SORUDAN SONRA YENİ QUIZ
+        A_GRUP_QUIZ_STATE.index = 0;
 
         AGrupQuiz(
           selectedSubject,
